@@ -1333,7 +1333,7 @@ button, input, select, textarea {
 .alert-info { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
 
 /* --------------------------------------------------------------------------
-   12. RESPONSIVE BREAKPOINTS
+   12. RESPONSIVE BREAKPOINTS (DESKTOP, TABLET & MOBILE)
    -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
   .admin-layout-container {
@@ -1342,6 +1342,20 @@ button, input, select, textarea {
 
   .admin-sidebar {
     width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+  }
+
+  .admin-sidebar-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-nav-item a {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
   }
 
   .admin-main-content {
@@ -1358,5 +1372,254 @@ button, input, select, textarea {
 
   .icon-laptop, .icon-brain {
     display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. MOBILE SPECIFIC OPTIMIZATIONS (Smartphones <= 640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* Home / Stage Mode Mobile */
+  .stage-container {
+    padding: 1rem 0.75rem;
+    justify-content: space-between;
+  }
+
+  .stage-top-nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+  }
+
+  .brand-logos-container {
+    width: 100%;
+    justify-content: center;
+    padding: 0.35rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .brand-logo-img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand-title-primary {
+    font-size: 0.82rem;
+  }
+
+  .brand-title-secondary {
+    font-size: 0.7rem;
+  }
+
+  .stage-title {
+    font-size: 2.4rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .stage-subtitle-box {
+    padding: 0.6rem 1.2rem;
+    max-width: 90%;
+  }
+
+  .stage-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .btn-spin-gold {
+    padding: 0.9rem 2.2rem;
+    font-size: 1.35rem;
+    width: 92%;
+    max-width: 320px;
+    justify-content: center;
+  }
+
+  .stage-decorations .floating-icon {
+    font-size: 2.2rem;
+    opacity: 0.4;
+  }
+
+  /* Slot Machine Rolling Animation Mobile */
+  .slot-machine-wrapper {
+    padding: 1.5rem 0.5rem;
+    width: 96%;
+    max-width: 100%;
+  }
+
+  .slot-machine-title {
+    font-size: 1.35rem;
+  }
+
+  .slot-track-container {
+    gap: 0.25rem;
+    padding: 0.6rem 0.25rem;
+  }
+
+  .slot-card {
+    width: 40px;
+    height: 56px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+  }
+
+  .slot-card-target {
+    width: 56px;
+    height: 74px;
+    font-size: 1.7rem;
+    border-radius: 12px;
+  }
+
+  /* Question Card Screen Mobile */
+  .quiz-screen-bg {
+    padding: 1rem 0.5rem;
+  }
+
+  .question-card-wrapper {
+    padding: 1.5rem 1rem;
+    border-radius: 20px;
+    margin-top: 4.2rem;
+    width: 96%;
+  }
+
+  .question-header-row {
+    margin-bottom: 1rem;
+  }
+
+  .badge-question-num {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.8rem;
+  }
+
+  .question-text-title {
+    font-size: 1.2rem;
+    line-height: 1.45;
+    margin-bottom: 1.25rem;
+  }
+
+  .question-choices-grid {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+
+  .choice-btn {
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .choice-key-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 0.92rem;
+    border-radius: 8px;
+  }
+
+  .question-footer-row {
+    flex-direction: column-reverse;
+    gap: 0.85rem;
+    align-items: stretch;
+    margin-top: 1.2rem;
+  }
+
+  .question-timer-pill {
+    align-self: center;
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .btn-answer-next {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  /* Answer Card Screen Mobile */
+  .answer-card-wrapper {
+    padding: 2rem 1.2rem;
+    border-radius: 22px;
+    margin-top: 4.2rem;
+    width: 96%;
+  }
+
+  .answer-check-icon {
+    width: 62px;
+    height: 62px;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .answer-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .answer-highlight-text {
+    font-size: 1.55rem;
+    line-height: 1.35;
+    margin: 0.6rem 0 1.2rem 0;
+  }
+
+  .answer-explanation-box {
+    padding: 0.9rem 1.1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-next-random {
+    width: 100%;
+    justify-content: center;
+    padding: 0.9rem 1.8rem;
+    font-size: 1.05rem;
+  }
+
+  /* Admin Dashboard & Management Mobile */
+  .stats-grid-4col {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1.1rem 0.9rem;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
+  }
+
+  .admin-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-data-table {
+    min-width: 600px;
+  }
+
+  .btn-primary-purple, .btn-secondary-dark {
+    padding: 0.6rem 1rem;
+    font-size: 0.88rem;
+  }
+}
+
+/* Extra Small Phones <= 380px */
+@media (max-width: 380px) {
+  .stage-title {
+    font-size: 2rem;
+  }
+
+  .slot-card {
+    width: 34px;
+    height: 48px;
+    font-size: 1rem;
+  }
+
+  .slot-card-target {
+    width: 48px;
+    height: 64px;
+    font-size: 1.4rem;
+  }
+
+  .stats-grid-4col {
+    grid-template-columns: 1fr;
   }
 }
