@@ -58,7 +58,7 @@
     <footer class="question-footer-row">
       <div class="timer-pill" id="timer-badge">
         <span>⏱</span>
-        <span id="timer-seconds">15 วินาที</span>
+        <span id="timer-seconds">{{ timer_seconds|default:15 }} วินาที</span>
       </div>
 
       <div style="display: flex; align-items: center; gap: 1rem;">
@@ -78,7 +78,7 @@
 {% block extra_js %}
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    let timeLeft = 15;
+    let timeLeft = {{ timer_seconds|default:15 }};
     const timerElement = document.getElementById('timer-seconds');
     const timerBadge = document.getElementById('timer-badge');
 

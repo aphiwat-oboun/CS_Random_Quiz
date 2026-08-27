@@ -8,6 +8,47 @@
     <h1 class="admin-card-title" style="font-size: 1.5rem;">⚙️ ตั้งค่าระบบและการสุ่ม</h1>
   </div>
 
+  <!-- Timer Duration Setting Card -->
+  <div style="background: #f0fdf4; border-radius: 16px; padding: 1.5rem; border: 1px solid #bbf7d0; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; color: #166534; margin-bottom: 0.5rem;">
+      ⏱️ ตั้งเวลาจับเวลานับถอยหลังต่อข้อ
+    </h2>
+    <p style="color: #15803d; font-size: 0.95rem; margin-bottom: 1.2rem;">
+      กำหนดจำนวนวินาทีสำหรับการจับเวลาตอบคำถามบนเวที (ปัจจุบัน: <strong>{{ current_timer_seconds }}</strong> วินาที)
+    </p>
+    <form method="POST" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+      {% csrf_token %}
+      <input type="hidden" name="set_timer_seconds" value="1">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <input 
+          type="number" 
+          name="timer_seconds" 
+          id="timer_seconds_input" 
+          value="{{ current_timer_seconds }}" 
+          min="5" 
+          max="300" 
+          class="form-control" 
+          style="width: 110px; font-size: 1.1rem; font-weight: 700; text-align: center; border-radius: 10px;"
+          required
+        >
+        <span style="font-weight: 600; color: #166534;">วินาที</span>
+      </div>
+
+      <!-- Quick Preset Buttons -->
+      <div style="display: flex; gap: 0.4rem;">
+        <button type="button" class="btn-preset-sec" onclick="document.getElementById('timer_seconds_input').value = 10;">10 วิ</button>
+        <button type="button" class="btn-preset-sec" onclick="document.getElementById('timer_seconds_input').value = 15;">15 วิ</button>
+        <button type="button" class="btn-preset-sec" onclick="document.getElementById('timer_seconds_input').value = 20;">20 วิ</button>
+        <button type="button" class="btn-preset-sec" onclick="document.getElementById('timer_seconds_input').value = 30;">30 วิ</button>
+        <button type="button" class="btn-preset-sec" onclick="document.getElementById('timer_seconds_input').value = 60;">60 วิ</button>
+      </div>
+
+      <button type="submit" class="btn-primary-save" style="background: #16a34a; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);">
+        💾 บันทึกเวลา
+      </button>
+    </form>
+  </div>
+
   <!-- Session Reset Card -->
   <div style="background: #f8fafc; border-radius: 16px; padding: 1.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
     <h2 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">

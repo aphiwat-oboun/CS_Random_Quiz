@@ -92,7 +92,7 @@ def rolling_animation_view(request, question_id):
 
 
 def question_view(request, question_id):
-    """หน้าแสดงคำถามขนาดใหญ่บนเวที พร้อมตัวจับเวลานับถอยหลัง 15 วินาที"""
+    """หน้าแสดงคำถามขนาดใหญ่บนเวที พร้อมตัวจับเวลานับถอยหลังตามที่ตั้งค่าไว้"""
     question = get_object_or_404(Question, id=question_id)
     all_active_ids = list(Question.objects.filter(is_active=True).order_by("id").values_list("id", flat=True))
     
@@ -102,11 +102,13 @@ def question_view(request, question_id):
         current_number = question.id
         
     total_active = len(all_active_ids)
+    timer_seconds = int(request.session.get("timer_seconds", 15))
 
     return render(request, "question.html", {
         "question": question,
         "current_number": current_number,
         "total_active": total_active,
+        "timer_seconds": timer_seconds,
     })
 
 
@@ -376,9 +378,21 @@ def admin_logs_view(request):
 
 
 def admin_settings_view(request):
-    """หน้าตั้งค่าและรีเซ็ตประวัติการสุ่ม"""
+    """หน้าตั้งค่าและรีเซ็ตประวัติการสุ่ม รวมถึงตั้งเวลาจับเวลาคำถาม"""
+    if request.method == "POST" and "set_timer_seconds" in request.POST:
+        try:
+            sec = int(request.POST.get("timer_seconds", 15))
+            if sec > 0:
+                request.session["timer_seconds"] = sec
+                request.session.modified = True
+                messages.success(request, f"ตั้งเวลานับถอยหลังเป็น {sec} วินาที เรียบร้อยแล้ว!")
+        except ValueError:
+            pass
+        return redirect("admin_settings")
+
     if request.method == "POST" and "reset_session" in request.POST:
         request.session["played_question_ids"] = []
+        request.session.modified = True
         messages.success(request, "รีเซ็ตคลังคำถามที่สุ่มไปแล้วเรียบร้อย!")
         return redirect("admin_settings")
 
@@ -389,8 +403,10 @@ def admin_settings_view(request):
 
     played_ids = request.session.get("played_question_ids", [])
     active_count = Question.objects.filter(is_active=True).count()
+    current_timer_seconds = int(request.session.get("timer_seconds", 15))
 
     return render(request, "admin_settings.html", {
         "played_count": len(played_ids),
         "active_count": active_count,
+        "current_timer_seconds": current_timer_seconds,
     })

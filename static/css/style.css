@@ -252,6 +252,28 @@ button, input, select, textarea {
   margin: auto;
 }
 
+/* Center Hero CS Logo */
+.center-cs-logo-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.65rem;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 30px rgba(251, 191, 36, 0.6),
+    0 10px 25px rgba(0, 0, 0, 0.4);
+  animation: floatAnim 4s ease-in-out infinite alternate;
+  border: 3px solid rgba(251, 191, 36, 0.8);
+}
+
+.hero-center-cs-logo {
+  width: clamp(75px, 11vw, 115px);
+  height: clamp(75px, 11vw, 115px);
+  object-fit: contain;
+}
+
 .stage-title {
   font-size: clamp(3rem, 7vw, 5.5rem);
   font-weight: 900;
@@ -1276,6 +1298,24 @@ button, input, select, textarea {
   background: #6366f1;
   color: #ffffff;
   border-color: #6366f1;
+}
+
+.btn-preset-sec {
+  padding: 0.45rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-preset-sec:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
 }
 
 /* --------------------------------------------------------------------------

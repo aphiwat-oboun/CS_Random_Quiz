@@ -42,6 +42,11 @@
 {% block extra_js %}
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // ปลดล็อกระบบเสียงสำหรับ Safari ทันทีที่หน้าโหลด
+    if (window.quizSounds) {
+      window.quizSounds.unlockSafariAudio();
+    }
+
     const targetQuestionNumber = {{ question_number }};
     const targetUrl = "{% url 'question_view' question_id %}";
     let isCancelled = false;
