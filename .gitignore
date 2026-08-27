@@ -1,0 +1,13 @@
+*.pyc
+__pycache__/
+*.sqlite3
+db.sqlite3
+.env
+firebase_credentials.json
+staticfiles_build/
+.vercel
+.vscode/
+.idea/
+.env*
+.env*local
+venv/

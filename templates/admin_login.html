@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}เข้าสู่ระบบผู้ดูแล — CS RANDOM QUIZ{% endblock %}
+
+{% block body %}
+<main class="login-page-container">
+  <div class="login-card">
+    <div class="login-icon-badge">
+      🔐
+    </div>
+
+    <h1 class="login-title">เข้าสู่ระบบแอดมิน</h1>
+    <p class="login-subtitle">ระบบจัดการ CS Random Quiz</p>
+
+    <!-- Django Messages -->
+    {% if messages %}
+    <div class="django-messages">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        <span>🔔</span>
+        <span>{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="form-group" style="text-align: left;">
+        <label class="form-label" for="id_username">ชื่อผู้ใช้ (Username)</label>
+        <input 
+          type="text" 
+          name="username" 
+          id="id_username" 
+          class="form-control" 
+          placeholder="admin" 
+          required 
+          autofocus
+        >
+      </div>
+
+      <div class="form-group" style="text-align: left;">
+        <label class="form-label" for="id_password">รหัสผ่าน (Password)</label>
+        <input 
+          type="password" 
+          name="password" 
+          id="id_password" 
+          class="form-control" 
+          placeholder="••••••••" 
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn-primary-save" style="width: 100%; margin-top: 1.25rem; font-size: 1.05rem;">
+        🚀 เข้าสู่ระบบ
+      </button>
+
+      <div style="margin-top: 1.5rem;">
+        <a href="{% url 'home' %}" style="color: #64748b; font-size: 0.92rem;">
+          ← กลับสู่หน้าหลัก
+        </a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

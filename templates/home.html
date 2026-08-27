@@ -1,0 +1,135 @@
+{% extends 'base.html' %} {% load static %} {% block title %}CS RANDOM QUIZ —
+มาสนุกกับคำถามวิทยาการคอมพิวเตอร์{% endblock %} {% block body %}
+<main class="stage-container">
+  <!-- Top Bar: University Logos & Admin Button -->
+  <header class="stage-top-nav">
+    <div class="brand-logos-container">
+      <img
+        src="{% static 'images/logo_ssku.png' %}"
+        alt="มหาวิทยาลัยราชภัฏศรีสะเกษ"
+        class="brand-logo-img"
+      />
+      <img
+        src="{% static 'images/logo_cs.png' %}"
+        alt="สาขาวิชาวิทยาการคอมพิวเตอร์"
+        class="brand-logo-img"
+      />
+      <div class="brand-text-block">
+        <span class="brand-title-primary">สาขาวิชาวิทยาการคอมพิวเตอร์</span>
+        <span class="brand-title-secondary">มหาวิทยาลัยราชภัฏศรีสะเกษ</span>
+      </div>
+    </div>
+
+    <a
+      href="{% url 'admin_dashboard' %}"
+      class="btn-stage-admin"
+      id="btn-admin-dashboard"
+    >
+      ⚙ Settings
+    </a>
+  </header>
+
+  <!-- Floating Stage 3D Icons & Props -->
+  <div class="stage-decorations" aria-hidden="true">
+    <div class="floating-icon icon-laptop">💻</div>
+    <div class="floating-icon icon-code">&lt;/&gt;</div>
+    <div class="floating-icon icon-brain">🧠</div>
+    <div class="floating-icon icon-bubble">{...}</div>
+    <!-- Decorative stage particles -->
+    <div
+      class="stage-confetti-particle"
+      style="top: 15%; left: 30%; background: #f59e0b; transform: rotate(15deg)"
+    ></div>
+    <div
+      class="stage-confetti-particle"
+      style="
+        top: 28%;
+        right: 28%;
+        background: #ec4899;
+        transform: rotate(-25deg);
+      "
+    ></div>
+    <div
+      class="stage-confetti-particle"
+      style="
+        bottom: 35%;
+        left: 22%;
+        background: #38bdf8;
+        transform: rotate(45deg);
+      "
+    ></div>
+    <div
+      class="stage-confetti-particle"
+      style="
+        bottom: 40%;
+        right: 18%;
+        background: #10b981;
+        transform: rotate(10deg);
+      "
+    ></div>
+  </div>
+
+  <!-- Main Center Hero -->
+  <div class="stage-center">
+    <h1 class="stage-title">CS<br />RANDOM QUIZ</h1>
+
+    <div class="stage-subtitle-box">
+      <p class="stage-subtitle">
+        มาสนุกกับคำถามเกี่ยวกับ<br /><strong>วิทยาการคอมพิวเตอร์</strong>
+      </p>
+    </div>
+
+    <!-- 3D Gold Action Spin Button -->
+    <div class="stage-action-area">
+      <a
+        href="{% url 'random_quiz' %}"
+        class="btn-spin-gold"
+        id="btn-start-random"
+      >
+        <span class="dice-icon">🎲</span>
+        <span>สุ่มคำถาม</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Bottom Stage Platform with Total Question Count -->
+  <footer class="stage-bottom">
+    <div class="stage-platform"></div>
+    <div class="pill-total-questions" id="pill-total-questions">
+      ⚙ คำถามทั้งหมด {{ total_questions }} ข้อ
+    </div>
+  </footer>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btn-start-random');
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        if (window.quizSounds) {
+          window.quizSounds.playButtonClick();
+        }
+      });
+    }
+
+    // Real-time Firestore Listener: อัปเดตจำนวนคำถามแบบเรียลไทม์เมื่อมีเพื่อนเพิ่ม/ลบคำถาม
+    if (window.firebaseDb) {
+      try {
+        window.firebaseDb.collection("questions").onSnapshot((snapshot) => {
+          if (!snapshot.empty) {
+            const count = snapshot.size;
+            const pill = document.getElementById('pill-total-questions');
+            if (pill) {
+              pill.textContent = `⚙ คำถามทั้งหมด ${count} ข้อ (🔥 Real-time)`;
+            }
+          }
+        });
+      } catch (e) {
+        console.log("[Firebase Realtime Note]", e);
+      }
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}เฉลยคำตอบ — CS RANDOM QUIZ{% endblock %}
+
+{% block body %}
+<main class="quiz-screen-bg" style="position: relative;">
+  <!-- Top Bar Return & Logos -->
+  <div style="position: absolute; top: 1.5rem; left: 2rem; z-index: 10; display: flex; align-items: center; gap: 1rem;">
+    <a href="{% url 'home' %}" class="btn-stage-admin" style="font-size: 0.92rem; padding: 0.5rem 1.2rem;">
+      ← กลับหน้าเวทีหลัก
+    </a>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <img src="{% static 'images/logo_ssku.png' %}" alt="SSKRU" style="width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+      <img src="{% static 'images/logo_cs.png' %}" alt="CS" style="width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+    </div>
+  </div>
+
+  <div class="answer-card-wrapper" id="answer-card">
+    <canvas id="confetti-canvas" class="answer-confetti-canvas" aria-hidden="true"></canvas>
+
+    <!-- Green Check Icon -->
+    <div class="answer-check-icon" aria-hidden="true">✓</div>
+
+    <!-- Answer Text -->
+    <p class="answer-subtitle">คำตอบคือ (ข้อ {{ question.correct_choice }})</p>
+    <h1 class="answer-highlight-text" id="correct-answer-text">
+      {{ question.correct_answer_text }}
+    </h1>
+
+    {% if question.explanation %}
+    <div class="answer-explanation-box">
+      <strong>💡 คำอธิบาย:</strong> {{ question.explanation }}
+    </div>
+    {% endif %}
+
+    <!-- Cheer Message -->
+    <p class="answer-cheer-message">เก่งมากน้อง ๆ ! 🎉</p>
+
+    <!-- Action Buttons Row -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="{% url 'home' %}" class="btn-secondary-cancel" style="padding: 0.9rem 1.8rem; font-size: 1.15rem;">
+        🏠 กลับหน้าหลัก
+      </a>
+      <a href="{% url 'random_quiz' %}" class="btn-next-random" id="btn-spin-next">
+        <span>🎲</span>
+        <span>สุ่มคำถามต่อไป</span>
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Play celebratory victory fanfare sound
+    if (window.quizSounds) {
+      window.quizSounds.playVictoryFanfare();
+    }
+
+    // Trigger confetti celebratory effect
+    if (typeof confetti === 'function') {
+      // First burst
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      
+      // Secondary lateral bursts
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 50,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+      }, 300);
+    }
+  });
+</script>
+{% endblock %}

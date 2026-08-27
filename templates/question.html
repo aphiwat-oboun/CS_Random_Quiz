@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}คำถามที่ {{ current_number }} / {{ total_active }} — CS RANDOM QUIZ{% endblock %}
+
+{% block body %}
+<main class="quiz-screen-bg" style="position: relative;">
+  <!-- Top Bar Return & Logos -->
+  <div style="position: absolute; top: 1.5rem; left: 2rem; z-index: 10; display: flex; align-items: center; gap: 1rem;">
+    <a href="{% url 'home' %}" class="btn-stage-admin" style="font-size: 0.92rem; padding: 0.5rem 1.2rem;">
+      ← กลับหน้าเวที
+    </a>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <img src="{% static 'images/logo_ssku.png' %}" alt="SSKRU" style="width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+      <img src="{% static 'images/logo_cs.png' %}" alt="CS" style="width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+    </div>
+  </div>
+
+  <div class="question-card-wrapper" id="question-card">
+    <!-- Top Decorative Dots -->
+    <div class="question-dots-decor" aria-hidden="true"></div>
+
+    <!-- Header Row -->
+    <header class="question-header-row">
+      <div class="badge-question-num" id="badge-question-num">
+        คำถามที่ {{ current_number }} / {{ total_active }}
+      </div>
+    </header>
+
+    <!-- Center Question Text -->
+    <section class="question-main-content">
+      <h1 class="question-text-title" id="question-title">
+        {{ question.text }}
+      </h1>
+
+      <!-- Choice Options (A, B, C, D) -->
+      <div class="question-choices-grid">
+        <div class="choice-box-item" id="choice-a">
+          <span class="choice-letter">A</span>
+          <span>{{ question.choice_a }}</span>
+        </div>
+        <div class="choice-box-item" id="choice-b">
+          <span class="choice-letter">B</span>
+          <span>{{ question.choice_b }}</span>
+        </div>
+        <div class="choice-box-item" id="choice-c">
+          <span class="choice-letter">C</span>
+          <span>{{ question.choice_c }}</span>
+        </div>
+        <div class="choice-box-item" id="choice-d">
+          <span class="choice-letter">D</span>
+          <span>{{ question.choice_d }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Footer Row: Countdown Timer & Action Buttons -->
+    <footer class="question-footer-row">
+      <div class="timer-pill" id="timer-badge">
+        <span>⏱</span>
+        <span id="timer-seconds">15 วินาที</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="{% url 'home' %}" class="btn-secondary-cancel" style="padding: 0.75rem 1.6rem; font-size: 1.05rem;">
+          ✕ ยกเลิก
+        </a>
+        <a href="{% url 'answer_view' question.id %}" class="btn-show-answer" id="btn-next-answer">
+          <span>เฉลย / ต่อไป</span>
+          <span>→</span>
+        </a>
+      </div>
+    </footer>
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let timeLeft = 15;
+    const timerElement = document.getElementById('timer-seconds');
+    const timerBadge = document.getElementById('timer-badge');
+
+    const countdownInterval = setInterval(() => {
+      timeLeft -= 1;
+      
+      if (timeLeft <= 0) {
+        timerElement.textContent = 'หมดเวลา!';
+        timerBadge.classList.add('timer-warning');
+        if (window.quizSounds) {
+          window.quizSounds.playWarningBeep();
+        }
+        clearInterval(countdownInterval);
+      } else {
+        timerElement.textContent = `${timeLeft} วินาที`;
+        if (timeLeft <= 5) {
+          timerBadge.classList.add('timer-warning');
+          if (window.quizSounds) {
+            window.quizSounds.playWarningBeep();
+          }
+        } else {
+          if (window.quizSounds) {
+            window.quizSounds.playCountdownTick();
+          }
+        }
+      }
+    }, 1000);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}{{ title }} — CS RANDOM QUIZ{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="max-width: 1000px; margin: 0 auto;">
+  <div class="admin-card-header">
+    <h1 class="admin-card-title" style="font-size: 1.5rem;">{{ title }}</h1>
+    <a href="{% url 'admin_question_list' %}" style="color: #64748b; font-weight: 500;">✕ ปิด</a>
+  </div>
+
+  <form method="POST" id="question-form">
+    {% csrf_token %}
+
+    <div class="form-2col-layout">
+      <!-- Left Column: Category, Question Text, Choices A-D -->
+      <div class="form-col-left">
+        <!-- 1. Category -->
+        <div class="form-group">
+          <label class="form-label" for="id_category">ประเภทคำถาม</label>
+          {{ form.category }}
+          {% if form.category.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.category.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- 2. Question Text -->
+        <div class="form-group">
+          <label class="form-label" for="id_text">คำถาม</label>
+          {{ form.text }}
+          {% if form.text.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.text.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- 3. Choices A, B, C, D -->
+        <div class="form-group">
+          <label class="form-label">ตัวเลือก</label>
+          
+          <div class="choice-input-group">
+            <span class="choice-badge-prefix">A</span>
+            {{ form.choice_a }}
+          </div>
+          {% if form.choice_a.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-bottom: 0.5rem;">{{ form.choice_a.errors.0 }}</div>
+          {% endif %}
+
+          <div class="choice-input-group">
+            <span class="choice-badge-prefix">B</span>
+            {{ form.choice_b }}
+          </div>
+          {% if form.choice_b.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-bottom: 0.5rem;">{{ form.choice_b.errors.0 }}</div>
+          {% endif %}
+
+          <div class="choice-input-group">
+            <span class="choice-badge-prefix">C</span>
+            {{ form.choice_c }}
+          </div>
+          {% if form.choice_c.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-bottom: 0.5rem;">{{ form.choice_c.errors.0 }}</div>
+          {% endif %}
+
+          <div class="choice-input-group">
+            <span class="choice-badge-prefix">D</span>
+            {{ form.choice_d }}
+          </div>
+          {% if form.choice_d.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-bottom: 0.5rem;">{{ form.choice_d.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Right Column: Difficulty, Explanation, Status Toggle -->
+      <div class="form-col-right">
+        <!-- 4. Difficulty -->
+        <div class="form-group">
+          <label class="form-label" for="id_difficulty">ระดับความยาก</label>
+          {{ form.difficulty }}
+          {% if form.difficulty.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.difficulty.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- 5. Explanation -->
+        <div class="form-group">
+          <label class="form-label" for="id_explanation">คำอธิบาย (เฉลย)</label>
+          {{ form.explanation }}
+          {% if form.explanation.errors %}
+          <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.explanation.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- 6. Status Toggle -->
+        <div class="form-group" style="margin-top: 1.5rem;">
+          <label class="form-label">สถานะ</label>
+          <label class="toggle-switch-container">
+            {{ form.is_active }}
+            <span class="toggle-switch-label">เปิดใช้งาน</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Correct Answer Selection & Actions -->
+    <div style="max-width: 450px; margin-top: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label" for="id_correct_choice">คำตอบที่ถูกต้อง</label>
+        {{ form.correct_choice }}
+        {% if form.correct_choice.errors %}
+        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.correct_choice.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="form-actions-row">
+      <a href="{% url 'admin_question_list' %}" class="btn-secondary-cancel">ยกเลิก</a>
+      <button type="submit" class="btn-primary-save">💾 บันทึกคำถาม</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

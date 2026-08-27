@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CS RANDOM QUIZ — ระบบสุ่มคำถามวิทยาการคอมพิวเตอร์{% endblock %}</title>
+  
+  <!-- Google Fonts: Prompt & Kanit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN for Analytics Doughnut Chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Canvas Confetti CDN for Celebratory Answer Screen -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Sound Effects Synthesizer (Web Audio API) -->
+  <script src="{% static 'js/sound_effects.js' %}"></script>
+
+  <!-- Firebase Web SDK (v10 Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCASWXjm222OjJ1Bm90on46qNA0dPLuwkE",
+      authDomain: "random-cs-57d01.firebaseapp.com",
+      projectId: "random-cs-57d01",
+      storageBucket: "random-cs-57d01.firebasestorage.app",
+      messagingSenderId: "967552966443",
+      appId: "1:967552966443:web:5ca944015aebd47fff2f6e"
+    };
+    try {
+      if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        window.firebaseDb = firebase.firestore();
+      }
+    } catch(e) {}
+  </script>
+
+  <!-- Custom Vanilla CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% block body %}
+    {% block content %}{% endblock %}
+  {% endblock %}
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,45 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}ตั้งค่าระบบ — CS RANDOM QUIZ{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="max-width: 800px; margin: 0 auto;">
+  <div class="admin-card-header">
+    <h1 class="admin-card-title" style="font-size: 1.5rem;">⚙️ ตั้งค่าระบบและการสุ่ม</h1>
+  </div>
+
+  <!-- Session Reset Card -->
+  <div style="background: #f8fafc; border-radius: 16px; padding: 1.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">
+      🔄 รีเซ็ตคลังการสุ่มคำถามในรอบปัจจุบัน
+    </h2>
+    <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.2rem;">
+      สถานะปัจจุบัน: สุ่มไปแล้ว <strong>{{ played_count }}</strong> / {{ active_count }} ข้อ (ระบบจะเริ่มสุ่มใหม่จากข้อที่ยังไม่เคยออกจนกว่าจะครบ)
+    </p>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="reset_session" value="1">
+      <button type="submit" class="btn-primary-save" style="background: #0284c7; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+        🔄 รีเซ็ตคลังสุ่มทันที
+      </button>
+    </form>
+  </div>
+
+  <!-- Clear History Logs -->
+  <div style="background: #fef2f2; border-radius: 16px; padding: 1.5rem; border: 1px solid #fecaca;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; color: #991b1b; margin-bottom: 0.5rem;">
+      🗑️ ล้างประวัติการสุ่มคำถามทั้งหมด
+    </h2>
+    <p style="color: #7f1d1d; font-size: 0.95rem; margin-bottom: 1.2rem;">
+      การล้างประวัติจะลบข้อมูลใน QuizLog ทั้งหมด แต่จะไม่ลบตัวคำถามหรือประเภทคำถาม
+    </p>
+    <form method="POST" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการเล่นทั้งหมด?');">
+      {% csrf_token %}
+      <input type="hidden" name="clear_logs" value="1">
+      <button type="submit" class="btn-primary-save" style="background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+        🗑️ ล้างประวัติทั้งหมด
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}กำลังสุ่มคำถาม... — CS RANDOM QUIZ{% endblock %}
+
+{% block body %}
+<main class="rolling-page-container">
+  <!-- Top Cancel/Exit Link -->
+  <div style="position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10;">
+    <a href="{% url 'home' %}" class="btn-stage-admin" style="font-size: 0.9rem; padding: 0.45rem 1rem;">
+      ✕ ยกเลิก / กลับหน้าหลัก
+    </a>
+  </div>
+
+  <h1 class="rolling-header" id="rolling-title">กำลังสุ่มคำถาม...</h1>
+
+  <!-- 7-Slot Machine Display -->
+  <div class="slot-machine-wrapper">
+    <div class="slot-dice" aria-hidden="true">🎲</div>
+
+    <div class="slot-digit-box" id="slot-0">12</div>
+    <div class="slot-digit-box" id="slot-1">38</div>
+    <div class="slot-digit-box" id="slot-2">04</div>
+    <div class="slot-digit-box" id="slot-3">45</div>
+    <div class="slot-digit-box" id="slot-4">17</div>
+    <div class="slot-digit-box active-target" id="slot-target">
+      <span id="target-number-text">--</span>
+    </div>
+    <div class="slot-digit-box" id="slot-6">08</div>
+  </div>
+
+  <!-- Progress Dots Indicator -->
+  <div class="slot-progress-dots" aria-hidden="true">
+    <div class="slot-dot"></div>
+    <div class="slot-dot"></div>
+    <div class="slot-dot"></div>
+    <div class="slot-dot"></div>
+    <div class="slot-dot active"></div>
+    <div class="slot-dot"></div>
+  </div>
+
+  <div style="margin-top: 2rem;">
+    <a href="{% url 'home' %}" style="color: #94a3b8; font-size: 0.95rem; text-decoration: underline;">
+      ✕ ยกเลิกการสุ่มกลับหน้าหลัก
+    </a>
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const targetQuestionNumber = {{ question_number }};
+    const targetUrl = "{% url 'question_view' question_id %}";
+    let isCancelled = false;
+
+    // Track if user clicked cancel
+    document.querySelectorAll('a[href="{% url 'home' %}"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        isCancelled = true;
+      });
+    });
+    
+    const slots = [
+      document.getElementById('slot-0'),
+      document.getElementById('slot-1'),
+      document.getElementById('slot-2'),
+      document.getElementById('slot-3'),
+      document.getElementById('slot-4'),
+      document.getElementById('slot-target'),
+      document.getElementById('slot-6')
+    ];
+    
+    const targetText = document.getElementById('target-number-text');
+    const dots = document.querySelectorAll('.slot-dot');
+
+    // Helper to format two digit number
+    const pad2 = (n) => String(n).padStart(2, '0');
+
+    // Fast rolling animation with audio ticks
+    let tickCount = 0;
+    let rollInterval = setInterval(() => {
+      tickCount++;
+      if (window.quizSounds && tickCount % 2 === 0) {
+        // Alternating pitch for realistic mechanical ratchet sound
+        const pitch = 500 + (tickCount % 6) * 40;
+        window.quizSounds.playSlotTick(pitch);
+      }
+
+      slots.forEach((slot, idx) => {
+        if (slot) {
+          const rand = Math.floor(Math.random() * 90) + 10;
+          if (idx === 5) {
+            targetText.textContent = pad2(rand);
+          } else {
+            slot.textContent = pad2(rand);
+          }
+        }
+      });
+    }, 60);
+
+    // Active dot animation
+    let dotIdx = 0;
+    let dotInterval = setInterval(() => {
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === dotIdx);
+      });
+      dotIdx = (dotIdx + 1) % dots.length;
+    }, 200);
+
+    // Stop rolling after 1.6s, lock winning number, then redirect
+    setTimeout(() => {
+      clearInterval(rollInterval);
+      clearInterval(dotInterval);
+
+      if (isCancelled) return;
+
+      // Play winning lock sound effect
+      if (window.quizSounds) {
+        window.quizSounds.playSlotLock();
+      }
+
+      // Lock target number
+      targetText.textContent = pad2(targetQuestionNumber);
+      
+      // Fixed surrounding numbers for realism
+      if (slots[0]) slots[0].textContent = '12';
+      if (slots[1]) slots[1].textContent = '38';
+      if (slots[2]) slots[2].textContent = '04';
+      if (slots[3]) slots[3].textContent = '45';
+      if (slots[4]) slots[4].textContent = '17';
+      if (slots[6]) slots[6].textContent = '08';
+
+      // Lock winning dot
+      dots.forEach((d, i) => d.classList.toggle('active', i === 4));
+
+      // Redirect to actual Question View
+      setTimeout(() => {
+        if (!isCancelled) {
+          window.location.href = targetUrl;
+        }
+      }, 700);
+    }, 1600);
+  });
+</script>
+{% endblock %}

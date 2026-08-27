@@ -1,0 +1,170 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Admin Dashboard — CS RANDOM QUIZ{% endblock %}
+
+{% block admin_content %}
+<!-- Welcome Section -->
+<header class="admin-welcome-section">
+  <h1 class="admin-welcome-title">ยินดีต้อนรับ Admin 👋</h1>
+  <p class="admin-welcome-subtitle">ภาพรวมระบบและสถิติการสุ่มคำถาม</p>
+</header>
+
+<!-- 4 Top Stat Cards -->
+<section class="stats-cards-grid">
+  <!-- Card 1: Total Questions -->
+  <div class="stat-card stat-purple">
+    <span class="stat-card-label">คำถามทั้งหมด</span>
+    <div class="stat-card-value-row">
+      <span class="stat-card-number">{{ total_questions }}</span>
+      <span class="stat-card-unit">ข้อ</span>
+    </div>
+  </div>
+
+  <!-- Card 2: Active Questions -->
+  <div class="stat-card stat-green">
+    <span class="stat-card-label">คำถามใช้ได้</span>
+    <div class="stat-card-value-row">
+      <span class="stat-card-number">{{ active_questions }}</span>
+      <span class="stat-card-unit">ข้อ</span>
+    </div>
+  </div>
+
+  <!-- Card 3: Total Categories -->
+  <div class="stat-card stat-blue">
+    <span class="stat-card-label">ประเภทคำถาม</span>
+    <div class="stat-card-value-row">
+      <span class="stat-card-number">{{ total_categories }}</span>
+      <span class="stat-card-unit">ประเภท</span>
+    </div>
+  </div>
+
+  <!-- Card 4: Played Count -->
+  <div class="stat-card stat-pink">
+    <span class="stat-card-label">สุ่มแล้ว</span>
+    <div class="stat-card-value-row">
+      <span class="stat-card-number">{{ total_played }}</span>
+      <span class="stat-card-unit">ครั้ง</span>
+    </div>
+  </div>
+</section>
+
+<!-- Dashboard 2-Column Grid: Doughnut Chart & Recent Logs -->
+<section class="dashboard-grid-2col">
+  <!-- Left Card: Doughnut Chart -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">ประเภทคำถามยอดนิยม</h2>
+    </div>
+
+    <div class="chart-doughnut-layout">
+      <div class="chart-canvas-box">
+        <canvas id="categoryDoughnutChart"></canvas>
+      </div>
+
+      <!-- Custom Breakdown Legend with Percentages -->
+      <ul class="chart-legend-list">
+        {% for cat in category_breakdown %}
+        <li class="chart-legend-item">
+          <span style="display: flex; align-items: center;">
+            <span class="legend-color-dot" style="background: {{ cat.color }};"></span>
+            <span>{{ cat.name }}</span>
+          </span>
+          <span class="legend-percentage">{{ cat.percentage }}% ({{ cat.count }} ข้อ)</span>
+        </li>
+        {% empty %}
+        <li class="chart-legend-item">ยังไม่มีข้อมูลคำถามในหมวดหมู่</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right Card: Recent Play Logs -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">ประวัติการสุ่มล่าสุด</h2>
+      <a href="{% url 'admin_logs' %}" style="color: #6366f1; font-weight: 600; font-size: 0.9rem;">ดูทั้งหมด →</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="custom-data-table">
+        <thead>
+          <tr>
+            <th>เวลา</th>
+            <th>หมวดหมู่</th>
+            <th>คำถาม</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in recent_logs %}
+          <tr>
+            <td style="white-space: nowrap; color: #64748b; font-size: 0.85rem;">
+              {{ log.played_at|date:"H:i:s d/m" }}
+            </td>
+            <td>
+              <span class="badge" style="background: {{ log.question.category.color }}20; color: {{ log.question.category.color }};">
+                {{ log.question.category.name }}
+              </span>
+            </td>
+            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              {{ log.question.text }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" style="text-align: center; color: #94a3b8; padding: 2rem;">
+              ยังไม่มีประวัติการสุ่มคำถาม
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const labels = {{ chart_labels_json|safe }};
+    const data = {{ chart_data_json|safe }};
+    const colors = {{ chart_colors_json|safe }};
+
+    if (labels && labels.length > 0) {
+      const ctx = document.getElementById('categoryDoughnutChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            borderWidth: 3,
+            borderColor: '#ffffff',
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false // We use our custom styled legend on the right
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  return ` ${label}: ${value} ข้อ`;
+                }
+              }
+            }
+          },
+          cutout: '68%'
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

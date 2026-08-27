@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="admin-layout-container">
+  <!-- Left Sidebar Navigation -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-header" style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="{% url 'home' %}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+        <img src="{% static 'images/logo_ssku.png' %}" alt="SSKRU" style="width: 32px; height: 32px; object-fit: contain;">
+        <img src="{% static 'images/logo_cs.png' %}" alt="CS" style="width: 32px; height: 32px; object-fit: contain;">
+        <div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: #ffffff; line-height: 1.1;">CS QUIZ</div>
+          <div style="font-size: 0.72rem; color: #38bdf8;">มรภ.ศรีสะเกษ</div>
+        </div>
+      </a>
+    </div>
+
+    <ul class="admin-sidebar-menu">
+      <li
+        class="admin-nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
+      >
+        <a href="{% url 'admin_dashboard' %}">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li
+        class="admin-nav-item {% if request.resolver_match.url_name == 'admin_question_list' %}active{% endif %}"
+      >
+        <a href="{% url 'admin_question_list' %}">
+          <span>📝</span>
+          <span>จัดการคำถาม</span>
+        </a>
+      </li>
+      <li
+        class="admin-nav-item {% if request.resolver_match.url_name == 'admin_question_add' %}active{% endif %}"
+      >
+        <a href="{% url 'admin_question_add' %}">
+          <span>➕</span>
+          <span>เพิ่มคำถาม</span>
+        </a>
+      </li>
+      <li
+        class="admin-nav-item {% if request.resolver_match.url_name == 'admin_category_list' %}active{% endif %}"
+      >
+        <a href="{% url 'admin_category_list' %}">
+          <span>📂</span>
+          <span>ประเภทคำถาม</span>
+        </a>
+      </li>
+      <li
+        class="admin-nav-item {% if request.resolver_match.url_name == 'admin_logs' %}active{% endif %}"
+      >
+        <a href="{% url 'admin_logs' %}">
+          <span>📈</span>
+          <span>สถิติการใช้งาน</span>
+        </a>
+      </li>
+      <li
+        class="admin-nav-item {% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %}"
+      >
+        <a href="{% url 'admin_settings' %}">
+          <span>⚙</span>
+          <span>ตั้งค่า</span>
+        </a>
+      </li>
+      <li class="admin-nav-item" style="margin-top: auto">
+        <a href="{% url 'home' %}" style="color: #38bdf8">
+          <span>กลับหน้าเวที</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="admin-main-content">
+    <!-- Django Flash Messages -->
+    {% if messages %}
+    <div class="django-messages">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        <span>🔔</span>
+        <span>{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% block admin_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

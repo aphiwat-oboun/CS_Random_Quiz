@@ -1,0 +1,77 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}สถิติและประวัติการสุ่ม — CS RANDOM QUIZ{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div>
+      <h1 class="admin-card-title" style="font-size: 1.5rem;">ประวัติการสุ่มคำถามทั้งหมด</h1>
+      <p style="color: #64748b; font-size: 0.92rem; margin-top: 0.2rem;">มีการสุ่มคำถามแล้วทั้งหมด {{ total_count }} ครั้ง</p>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-data-table">
+      <thead>
+        <tr>
+          <th style="width: 80px;">Log ID</th>
+          <th style="width: 180px;">วัน-เวลา</th>
+          <th style="width: 180px;">หมวดหมู่</th>
+          <th>คำถามที่สุ่มได้</th>
+          <th style="width: 100px;">คำตอบที่ถูก</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in page_obj %}
+        <tr>
+          <td style="color: #64748b; font-weight: 600;">#{{ log.id }}</td>
+          <td style="color: #475569; font-size: 0.9rem;">{{ log.played_at|date:"Y-m-d H:i:s" }}</td>
+          <td>
+            <span class="badge" style="background: {{ log.question.category.color }}20; color: {{ log.question.category.color }};">
+              {{ log.question.category.name }}
+            </span>
+          </td>
+          <td>
+            <strong style="color: #0f172a;">{{ log.question.text }}</strong>
+          </td>
+          <td>
+            <span class="badge" style="background: #dcfce7; color: #15803d; font-weight: 700;">
+              ข้อ {{ log.question.correct_choice }}
+            </span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; color: #94a3b8; padding: 3rem;">
+            ยังไม่มีประวัติการสุ่มคำถาม
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div class="pagination-container">
+    <span>แสดงหน้า {{ page_obj.number }} จากทั้งหมด {{ page_obj.paginator.num_pages }} หน้า</span>
+    <div class="pagination-links">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">« ก่อนหน้า</a>
+      {% endif %}
+      
+      {% for num in page_obj.paginator.page_range %}
+      <a href="?page={{ num }}" class="page-btn {% if page_obj.number == num %}active{% endif %}">
+        {{ num }}
+      </a>
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="page-btn">ถัดไป »</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

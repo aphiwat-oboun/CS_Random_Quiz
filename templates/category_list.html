@@ -1,0 +1,80 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}ประเภทคำถาม — CS RANDOM QUIZ{% endblock %}
+
+{% block admin_content %}
+<div class="dashboard-grid-2col">
+  <!-- Left: Category List -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h1 class="admin-card-title" style="font-size: 1.35rem;">ประเภทคำถามทั้งหมด</h1>
+    </div>
+
+    <div class="table-responsive">
+      <table class="custom-data-table">
+        <thead>
+          <tr>
+            <th>สี</th>
+            <th>ชื่อประเภท</th>
+            <th>จำนวนคำถาม</th>
+            <th style="text-align: right;">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat in categories %}
+          <tr>
+            <td>
+              <span class="legend-color-dot" style="background: {{ cat.color }}; width: 18px; height: 18px;"></span>
+            </td>
+            <td style="font-weight: 600;">{{ cat.name }}</td>
+            <td>
+              <span class="badge" style="background: #eef2ff; color: #4338ca;">
+                {{ cat.q_count }} ข้อ
+              </span>
+            </td>
+            <td style="text-align: right; white-space: nowrap;">
+              <a href="{% url 'admin_category_edit' cat.id %}" style="color: #6366f1; font-weight: 600; margin-right: 0.6rem;">
+                ✏️ แก้ไข
+              </a>
+              <a href="{% url 'admin_category_delete' cat.id %}" style="color: #ef4444; font-weight: 600;">
+                🗑️ ลบ
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; color: #94a3b8; padding: 2rem;">
+              ยังไม่มีประเภทคำถาม
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Right: Add New Category Form -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title" style="font-size: 1.35rem;">➕ เพิ่มประเภทคำถามใหม่</h2>
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" for="id_name">ชื่อประเภทคำถาม</label>
+        {{ form.name }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="id_color">สีประจำประเภท (สำหรับกราฟ/ป้าย)</label>
+        {{ form.color }}
+      </div>
+
+      <button type="submit" class="btn-primary-save" style="width: 100%; margin-top: 1rem;">
+        ➕ เพิ่มประเภท
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
