@@ -110,6 +110,24 @@
         }
       });
     }
+
+    // Spacebar หรือ Enter เพื่อเริ่มสุ่มคำถามทันที
+    document.addEventListener('keydown', (e) => {
+      // ตรวจสอบว่าไม่ได้กำลังพิมพ์ใน input ใดๆ
+      if (['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) return;
+
+      if (e.code === 'Space' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (window.quizSounds) {
+          window.quizSounds.playButtonClick();
+        }
+        if (btn) {
+          btn.click();
+        } else {
+          window.location.href = "{% url 'random_quiz' %}";
+        }
+      }
+    });
   });
 </script>
 {% endblock %}

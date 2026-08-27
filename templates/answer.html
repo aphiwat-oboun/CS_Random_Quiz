@@ -84,6 +84,23 @@
         });
       }, 300);
     }
+
+    // Spacebar หรือ Enter เพื่อสุ่มคำถามข้อถัดไปทันที
+    document.addEventListener('keydown', (e) => {
+      if (['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) return;
+      if (e.code === 'Space' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (window.quizSounds) {
+          window.quizSounds.playButtonClick();
+        }
+        const nextSpinBtn = document.getElementById('btn-spin-next');
+        if (nextSpinBtn) {
+          nextSpinBtn.click();
+        } else {
+          window.location.href = "{% url 'random_quiz' %}";
+        }
+      }
+    });
   });
 </script>
 {% endblock %}

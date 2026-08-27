@@ -106,6 +106,20 @@
         }
       }
     }, 1000);
+
+    // Spacebar หรือ Enter เพื่อเฉลยคำตอบทันที
+    document.addEventListener('keydown', (e) => {
+      if (['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) return;
+      if (e.code === 'Space' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        const nextBtn = document.getElementById('btn-show-answer');
+        if (nextBtn) {
+          nextBtn.click();
+        } else {
+          window.location.href = "{% url 'answer_view' question.id %}";
+        }
+      }
+    });
   });
 </script>
 {% endblock %}
