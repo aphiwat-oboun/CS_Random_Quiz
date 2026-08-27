@@ -5,6 +5,7 @@ urlpatterns = [
     # 1. หน้าเวทีและผู้เล่น (Stage & Player Flow)
     path("", views.home_view, name="home"),
     path("quiz/random/", views.random_quiz_view, name="random_quiz"),
+    path("quiz/reset-session/", views.reset_quiz_session_view, name="reset_quiz_session"),
     path("quiz/rolling/<int:question_id>/", views.rolling_animation_view, name="rolling_animation"),
     path("quiz/question/<int:question_id>/", views.question_view, name="question_view"),
     path("quiz/answer/<int:question_id>/", views.answer_view, name="answer_view"),

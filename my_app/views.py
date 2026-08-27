@@ -32,8 +32,8 @@ def home_view(request):
 
 def random_quiz_view(request):
     """
-    ระบบสุ่มคำถามแบบไม่ซ้ำ (จนกว่าจะครบทุกข้อ)
-    ใช้ Django Session เก็บ ID คำถามที่เล่นไปแล้ว
+    ระบบสุ่มคำถามแบบไม่ซ้ำกันอย่างเด็ดขาด (จนกว่าจะครบทุก 50 ข้อ)
+    ใช้ Django Session + request.session.modified = True
     """
     active_questions = list(Question.objects.filter(is_active=True).values_list("id", flat=True))
     
@@ -41,24 +41,36 @@ def random_quiz_view(request):
         messages.warning(request, "ยังไม่มีคำถามที่เปิดใช้งานในระบบ กรุณาเพิ่มคำถามก่อน")
         return redirect("home")
     
-    # ดึงรายการข้อที่เคยสุ่มไปแล้วจาก session
-    played_ids = request.session.get("played_question_ids", [])
+    # 1. ดึงรายการข้อที่เคยสุ่มไปแล้วจาก session (แปลงเป็น int ป้องกัน type mismatch)
+    raw_played = request.session.get("played_question_ids", [])
+    played_ids = [int(x) for x in raw_played if str(x).isdigit()]
     
-    # กรองเฉพาะข้อที่ยังไม่ได้เล่น
+    # 2. กรองเฉพาะข้อที่ยังไม่เคยเล่น
     unplayed_ids = [qid for qid in active_questions if qid not in played_ids]
     
-    # หากสุ่มครบหมดทุกข้อแล้ว ให้รีเซ็ตประวัติการสุ่มใน session เพื่อเริ่มรอบใหม่
+    # 3. หากสุ่มจนครบหมดทุกข้อแล้ว ให้เริ่มรอบใหม่
     if not unplayed_ids:
         played_ids = []
         unplayed_ids = active_questions
     
-    # สุ่มเลือก 1 ข้อ
+    # 4. สุ่มเลือก 1 ข้อจากข้อที่ยังไม่เคยเล่นเด็ดขาด
     chosen_id = random.choice(unplayed_ids)
     played_ids.append(chosen_id)
-    request.session["played_question_ids"] = played_ids
+    
+    # บันทึกกลับเข้า session และสั่ง modified = True ให้บันทึก Cookie ทันที
+    request.session["played_question_ids"] = list(set(played_ids))
+    request.session.modified = True
     
     # ส่งต่อไปยังหน้าแสดง Animation สล็อตตัวเลข
     return redirect("rolling_animation", question_id=chosen_id)
+
+
+def reset_quiz_session_view(request):
+    """ฟังก์ชันรีเซ็ตประวัติข้อที่เคยสุ่มแล้ว เพื่อเริ่มรอบใหม่ตั้งแต่ต้น"""
+    request.session["played_question_ids"] = []
+    request.session.modified = True
+    messages.success(request, "รีเซ็ตประวัติการสุ่มคำถามเรียบร้อยแล้ว เริ่มรอบใหม่ได้ทันที!")
+    return redirect("home")
 
 
 def rolling_animation_view(request, question_id):
