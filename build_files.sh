@@ -7,13 +7,13 @@ echo "=========================================="
 python3 -m pip install --break-system-packages -r requirements.txt
 
 echo "=========================================="
-echo "Creating Static Directory & Collecting..."
+echo "Collecting Static Files..."
 echo "=========================================="
-mkdir -p staticfiles_build/static
+mkdir -p staticfiles
 python3 manage.py collectstatic --noinput --clear
 
 echo "=========================================="
-echo "Running Migrations & Seeding Initial Data..."
+echo "Running Database Migrations & Seeding..."
 echo "=========================================="
 python3 manage.py migrate --noinput
 python3 manage.py seed_data
