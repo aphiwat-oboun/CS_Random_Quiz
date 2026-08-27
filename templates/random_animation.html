@@ -17,15 +17,13 @@
   <div class="slot-machine-wrapper">
     <div class="slot-dice" aria-hidden="true">🎲</div>
 
-    <div class="slot-digit-box" id="slot-0">12</div>
-    <div class="slot-digit-box" id="slot-1">38</div>
-    <div class="slot-digit-box" id="slot-2">04</div>
-    <div class="slot-digit-box" id="slot-3">45</div>
-    <div class="slot-digit-box" id="slot-4">17</div>
-    <div class="slot-digit-box active-target" id="slot-target">
-      <span id="target-number-text">--</span>
-    </div>
-    <div class="slot-digit-box" id="slot-6">08</div>
+    <div class="slot-digit-box" id="slot-0">--</div>
+    <div class="slot-digit-box" id="slot-1">--</div>
+    <div class="slot-digit-box" id="slot-2">--</div>
+    <div class="slot-digit-box" id="slot-3">--</div>
+    <div class="slot-digit-box" id="slot-4">--</div>
+    <div class="slot-digit-box" id="slot-5">--</div>
+    <div class="slot-digit-box" id="slot-6">--</div>
   </div>
 
   <!-- Progress Dots Indicator -->
@@ -34,7 +32,8 @@
     <div class="slot-dot"></div>
     <div class="slot-dot"></div>
     <div class="slot-dot"></div>
-    <div class="slot-dot active"></div>
+    <div class="slot-dot"></div>
+    <div class="slot-dot"></div>
     <div class="slot-dot"></div>
   </div>
 </main>
@@ -60,22 +59,21 @@
       document.getElementById('slot-2'),
       document.getElementById('slot-3'),
       document.getElementById('slot-4'),
-      document.getElementById('slot-target'),
+      document.getElementById('slot-5'),
       document.getElementById('slot-6')
     ];
     
-    const targetText = document.getElementById('target-number-text');
     const dots = document.querySelectorAll('.slot-dot');
 
     // Helper to format two digit number
     const pad2 = (n) => String(n).padStart(2, '0');
 
-    // Dynamic Running Golden Frame & Deceleration Animation
+    // สุ่มตำแหน่งกล่องที่จะหยุดสุ่มอย่างอิสระ (0 - 6) ไม่ให้หยุดที่เดิมทุกครั้ง!
+    const targetSlotIndex = Math.floor(Math.random() * slots.length);
     let currentActiveIndex = 0;
-    const targetSlotIndex = 5; // Winning slot
     let stepDelay = 65; // ms per step
     const startTime = Date.now();
-    const totalDuration = 2100; // Total 2.1s
+    const totalDuration = 2200; // 2.2s
 
     function cycleFrame() {
       if (isCancelled) return;
@@ -98,57 +96,46 @@
       });
 
       // 3. Randomize digits across all slots
-      slots.forEach((slot, idx) => {
+      slots.forEach((slot) => {
         if (slot) {
           const rand = Math.floor(Math.random() * 90) + 10;
-          if (slot.id === 'slot-target') {
-            targetText.textContent = pad2(rand);
-          } else {
-            slot.textContent = pad2(rand);
-          }
+          slot.textContent = pad2(rand);
         }
       });
 
-      // 4. Play Mechanical Wheel Audio Tick (Pitch follows the spotlight frame)
+      // 4. Play Mechanical Wheel Audio Tick
       if (window.quizSounds) {
         const pitch = 440 + (currentActiveIndex * 65);
         window.quizSounds.playSlotTick(pitch);
       }
 
       // 5. Deceleration Logic (Roulette Wheel Curve)
-      if (elapsed < totalDuration - 600) {
+      if (elapsed < totalDuration - 700) {
         // Fast Running Phase
         currentActiveIndex = (currentActiveIndex + 1) % slots.length;
         setTimeout(cycleFrame, stepDelay);
       } else if (elapsed < totalDuration) {
-        // Decelerating / Slowing Down Phase
-        stepDelay += 40;
+        // Decelerating Phase
+        stepDelay += 45;
         currentActiveIndex = (currentActiveIndex + 1) % slots.length;
         setTimeout(cycleFrame, stepDelay);
       } else {
-        // 6. Lock Firmly onto Target Winning Slot
+        // 6. Lock Firmly onto the Randomized Winning Slot
         currentActiveIndex = targetSlotIndex;
         slots.forEach((s, idx) => {
           if (s) {
             if (idx === targetSlotIndex) {
+              s.textContent = pad2(targetQuestionNumber);
               s.classList.add('active-target');
             } else {
+              s.textContent = pad2(Math.floor(Math.random() * 88) + 10);
               s.classList.remove('active-target');
             }
           }
         });
 
-        // Set realistic final numbers & target
-        targetText.textContent = pad2(targetQuestionNumber);
-        if (slots[0]) slots[0].textContent = '12';
-        if (slots[1]) slots[1].textContent = '38';
-        if (slots[2]) slots[2].textContent = '04';
-        if (slots[3]) slots[3].textContent = '45';
-        if (slots[4]) slots[4].textContent = '17';
-        if (slots[6]) slots[6].textContent = '08';
-
         // Winning dot lock
-        dots.forEach((d, i) => d.classList.toggle('active', i === 4));
+        dots.forEach((d, i) => d.classList.toggle('active', i === (targetSlotIndex % dots.length)));
 
         // Play Winning Chime!
         if (window.quizSounds) {
@@ -160,7 +147,7 @@
           if (!isCancelled) {
             window.location.href = targetUrl;
           }
-        }, 800);
+        }, 850);
       }
     }
 
