@@ -92,12 +92,9 @@
     </div>
   </div>
 
-  <!-- Bottom Stage Platform with Total Question Count -->
+  <!-- Bottom Stage Platform -->
   <footer class="stage-bottom">
     <div class="stage-platform"></div>
-    <div class="pill-total-questions" id="pill-total-questions">
-      ⚙ คำถามทั้งหมด {{ total_questions }} ข้อ
-    </div>
   </footer>
 </main>
 {% endblock %}
@@ -112,23 +109,6 @@
           window.quizSounds.playButtonClick();
         }
       });
-    }
-
-    // Real-time Firestore Listener: อัปเดตจำนวนคำถามแบบเรียลไทม์เมื่อมีเพื่อนเพิ่ม/ลบคำถาม
-    if (window.firebaseDb) {
-      try {
-        window.firebaseDb.collection("questions").onSnapshot((snapshot) => {
-          if (!snapshot.empty) {
-            const count = snapshot.size;
-            const pill = document.getElementById('pill-total-questions');
-            if (pill) {
-              pill.textContent = `⚙ คำถามทั้งหมด ${count} ข้อ`;
-            }
-          }
-        });
-      } catch (e) {
-        console.log("[Firebase Realtime Note]", e);
-      }
     }
   });
 </script>
