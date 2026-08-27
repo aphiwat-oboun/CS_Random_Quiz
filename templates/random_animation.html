@@ -76,70 +76,102 @@
     // Helper to format two digit number
     const pad2 = (n) => String(n).padStart(2, '0');
 
-    // Fast rolling animation with audio ticks
-    let tickCount = 0;
-    let rollInterval = setInterval(() => {
-      tickCount++;
-      if (window.quizSounds && tickCount % 2 === 0) {
-        // Alternating pitch for realistic mechanical ratchet sound
-        const pitch = 500 + (tickCount % 6) * 40;
-        window.quizSounds.playSlotTick(pitch);
-      }
+    // Dynamic Running Golden Frame & Deceleration Animation
+    let currentActiveIndex = 0;
+    const targetSlotIndex = 5; // Winning slot
+    let stepDelay = 65; // ms per step
+    const startTime = Date.now();
+    const totalDuration = 2100; // Total 2.1s
 
+    function cycleFrame() {
+      if (isCancelled) return;
+      const elapsed = Date.now() - startTime;
+
+      // 1. Move Active Golden Spotlight Border
+      slots.forEach((s, idx) => {
+        if (s) {
+          if (idx === currentActiveIndex) {
+            s.classList.add('active-target');
+          } else {
+            s.classList.remove('active-target');
+          }
+        }
+      });
+
+      // 2. Cycle Progress Dots
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === (currentActiveIndex % dots.length));
+      });
+
+      // 3. Randomize digits across all slots
       slots.forEach((slot, idx) => {
         if (slot) {
           const rand = Math.floor(Math.random() * 90) + 10;
-          if (idx === 5) {
+          if (slot.id === 'slot-target') {
             targetText.textContent = pad2(rand);
           } else {
             slot.textContent = pad2(rand);
           }
         }
       });
-    }, 60);
 
-    // Active dot animation
-    let dotIdx = 0;
-    let dotInterval = setInterval(() => {
-      dots.forEach((d, i) => {
-        d.classList.toggle('active', i === dotIdx);
-      });
-      dotIdx = (dotIdx + 1) % dots.length;
-    }, 200);
-
-    // Stop rolling after 1.6s, lock winning number, then redirect
-    setTimeout(() => {
-      clearInterval(rollInterval);
-      clearInterval(dotInterval);
-
-      if (isCancelled) return;
-
-      // Play winning lock sound effect
+      // 4. Play Mechanical Wheel Audio Tick (Pitch follows the spotlight frame)
       if (window.quizSounds) {
-        window.quizSounds.playSlotLock();
+        const pitch = 440 + (currentActiveIndex * 65);
+        window.quizSounds.playSlotTick(pitch);
       }
 
-      // Lock target number
-      targetText.textContent = pad2(targetQuestionNumber);
-      
-      // Fixed surrounding numbers for realism
-      if (slots[0]) slots[0].textContent = '12';
-      if (slots[1]) slots[1].textContent = '38';
-      if (slots[2]) slots[2].textContent = '04';
-      if (slots[3]) slots[3].textContent = '45';
-      if (slots[4]) slots[4].textContent = '17';
-      if (slots[6]) slots[6].textContent = '08';
+      // 5. Deceleration Logic (Roulette Wheel Curve)
+      if (elapsed < totalDuration - 600) {
+        // Fast Running Phase
+        currentActiveIndex = (currentActiveIndex + 1) % slots.length;
+        setTimeout(cycleFrame, stepDelay);
+      } else if (elapsed < totalDuration) {
+        // Decelerating / Slowing Down Phase
+        stepDelay += 40;
+        currentActiveIndex = (currentActiveIndex + 1) % slots.length;
+        setTimeout(cycleFrame, stepDelay);
+      } else {
+        // 6. Lock Firmly onto Target Winning Slot
+        currentActiveIndex = targetSlotIndex;
+        slots.forEach((s, idx) => {
+          if (s) {
+            if (idx === targetSlotIndex) {
+              s.classList.add('active-target');
+            } else {
+              s.classList.remove('active-target');
+            }
+          }
+        });
 
-      // Lock winning dot
-      dots.forEach((d, i) => d.classList.toggle('active', i === 4));
+        // Set realistic final numbers & target
+        targetText.textContent = pad2(targetQuestionNumber);
+        if (slots[0]) slots[0].textContent = '12';
+        if (slots[1]) slots[1].textContent = '38';
+        if (slots[2]) slots[2].textContent = '04';
+        if (slots[3]) slots[3].textContent = '45';
+        if (slots[4]) slots[4].textContent = '17';
+        if (slots[6]) slots[6].textContent = '08';
 
-      // Redirect to actual Question View
-      setTimeout(() => {
-        if (!isCancelled) {
-          window.location.href = targetUrl;
+        // Winning dot lock
+        dots.forEach((d, i) => d.classList.toggle('active', i === 4));
+
+        // Play Winning Chime!
+        if (window.quizSounds) {
+          window.quizSounds.playSlotLock();
         }
-      }, 700);
-    }, 1600);
+
+        // Smooth transition to Question Page
+        setTimeout(() => {
+          if (!isCancelled) {
+            window.location.href = targetUrl;
+          }
+        }, 800);
+      }
+    }
+
+    // Start cycling!
+    cycleFrame();
   });
 </script>
 {% endblock %}
