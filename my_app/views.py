@@ -234,7 +234,7 @@ def admin_question_list_view(request):
     elif status == "inactive":
         questions = questions.filter(is_active=False)
 
-    paginator = Paginator(questions, 10)
+    paginator = Paginator(questions, 8)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     custom_page_range = paginator.get_elided_page_range(page_obj.number, on_each_side=2, on_ends=1)
