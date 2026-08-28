@@ -57,10 +57,10 @@
     <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.2rem;">
       สถานะปัจจุบัน: สุ่มไปแล้ว <strong>{{ played_count }}</strong> / {{ active_count }} ข้อ (ระบบจะเริ่มสุ่มใหม่จากข้อที่ยังไม่เคยออกจนกว่าจะครบ)
     </p>
-    <form method="POST">
+    <form method="POST" id="form-reset-session">
       {% csrf_token %}
       <input type="hidden" name="reset_session" value="1">
-      <button type="submit" class="btn-primary-save" style="background: #0284c7; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+      <button type="button" onclick="confirmResetSession()" class="btn-primary-save" style="background: #0284c7; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
         🔄 รีเซ็ตคลังสุ่มทันที
       </button>
     </form>
@@ -74,13 +74,55 @@
     <p style="color: #7f1d1d; font-size: 0.95rem; margin-bottom: 1.2rem;">
       การล้างประวัติจะลบข้อมูลใน QuizLog ทั้งหมด แต่จะไม่ลบตัวคำถามหรือประเภทคำถาม
     </p>
-    <form method="POST" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการเล่นทั้งหมด?');">
+    <form method="POST" id="form-clear-logs">
       {% csrf_token %}
       <input type="hidden" name="clear_logs" value="1">
-      <button type="submit" class="btn-primary-save" style="background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+      <button type="button" onclick="confirmClearLogs()" class="btn-primary-save" style="background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
         🗑️ ล้างประวัติทั้งหมด
       </button>
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+function confirmResetSession() {
+  Swal.fire({
+    title: 'รีเซ็ตคลังสุ่มคำถาม?',
+    html: '<p style="color:#475569; font-size:1.02rem; line-height:1.6; margin:0.5rem 0 1.2rem 0;">ระบบจะล้างประวัติคำถามที่เคยออกไปแล้วในรอบนี้<br><span style="color:#0284c7; font-weight:600;">เพื่อให้สามารถเริ่มสุ่มคำถามใหม่ได้ครบทุกข้อ</span></p>',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#0284c7',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: '🔄 ยืนยันรีเซ็ต',
+    cancelButtonText: 'ยกเลิก',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById('form-reset-session').submit();
+    }
+  });
+}
+
+function confirmClearLogs() {
+  Swal.fire({
+    title: 'ยืนยันการล้างประวัติการเล่น?',
+    html: '<p style="color:#475569; font-size:1.02rem; line-height:1.6; margin:0.5rem 0 1.2rem 0;">คุณต้องการล้างข้อมูลประวัติการสุ่มคำถาม (QuizLog) ทั้งหมดใช่หรือไม่?<br><span style="color:#ef4444; font-weight:600;">⚠️ ข้อมูลประวัติการเล่นจะถูกล้างถาวร แต่คำถามจะไม่ถูกลบ</span></p>',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: '🗑️ ยืนยันล้างประวัติ',
+    cancelButtonText: 'ยกเลิก',
+    reverseButtons: true,
+    focusCancel: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById('form-clear-logs').submit();
+    }
+  });
+}
+</script>
 {% endblock %}

@@ -92,6 +92,26 @@
 
 {% block extra_js %}
 <script>
+  // 🔔 Render Django Messages with SweetAlert2 Toasts
+  {% if messages %}
+    document.addEventListener("DOMContentLoaded", () => {
+      {% for message in messages %}
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: '{% if message.tags == "error" %}error{% elif message.tags == "warning" %}warning{% elif message.tags == "info" %}info{% else %}success{% endif %}',
+          title: '{{ message|escapejs }}',
+          showConfirmButton: false,
+          timer: 3500,
+          timerProgressBar: true,
+          customClass: {
+            popup: 'cs-custom-popup'
+          }
+        });
+      {% endfor %}
+    });
+  {% endif %}
+
   // 🔥 Real-time Firebase Firestore Auto-Sync Engine
   document.addEventListener("DOMContentLoaded", () => {
     if (window.firebaseDb) {
