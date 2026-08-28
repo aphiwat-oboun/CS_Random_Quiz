@@ -74,17 +74,6 @@
 
   <!-- Main Content Area -->
   <main class="admin-main-content">
-    <!-- Django Flash Messages -->
-    {% if messages %}
-    <div class="django-messages">
-      {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        <span>🔔</span>
-        <span>{{ message }}</span>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
     {% block admin_content %}{% endblock %}
   </main>
 </div>
@@ -92,7 +81,7 @@
 
 {% block extra_js %}
 <script>
-  // 🔔 Render Django Messages with SweetAlert2 Toasts
+  // 🔔 Render Django Flash Messages as Clean Floating Toasts
   {% if messages %}
     document.addEventListener("DOMContentLoaded", () => {
       {% for message in messages %}
@@ -102,10 +91,13 @@
           icon: '{% if message.tags == "error" %}error{% elif message.tags == "warning" %}warning{% elif message.tags == "info" %}info{% else %}success{% endif %}',
           title: '{{ message|escapejs }}',
           showConfirmButton: false,
-          timer: 3500,
+          timer: 3000,
           timerProgressBar: true,
-          customClass: {
-            popup: 'cs-custom-popup'
+          showClass: {
+            popup: 'swal2-show'
+          },
+          hideClass: {
+            popup: 'swal2-hide'
           }
         });
       {% endfor %}
