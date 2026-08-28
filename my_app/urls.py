@@ -23,6 +23,7 @@ urlpatterns = [
     path("admin-panel/question/edit/<int:question_id>/", views.admin_question_edit_view, name="admin_question_edit"),
     path("admin-panel/question/delete/<int:question_id>/", views.admin_question_delete_view, name="admin_question_delete"),
     path("admin-panel/question/toggle/<int:question_id>/", views.admin_question_toggle_active_view, name="admin_question_toggle"),
+    path("admin-panel/sync-firebase/", views.admin_sync_firebase_view, name="admin_sync_firebase"),
 
     # 5. จัดการประเภทคำถาม (Category Management)
     path("admin-panel/categories/", views.admin_category_list_view, name="admin_category_list"),
@@ -32,4 +33,7 @@ urlpatterns = [
     # 6. สถิติการใช้งานและการตั้งค่า (Logs & Settings)
     path("admin-panel/logs/", views.admin_logs_view, name="admin_logs"),
     path("admin-panel/settings/", views.admin_settings_view, name="admin_settings"),
+
+    # 7. Real-time Firebase Background Sync API
+    path("api/sync-firestore/", views.api_sync_firestore_view, name="api_sync_firestore"),
 ]

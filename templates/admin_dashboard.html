@@ -4,9 +4,14 @@
 
 {% block admin_content %}
 <!-- Welcome Section -->
-<header class="admin-welcome-section">
-  <h1 class="admin-welcome-title">ยินดีต้อนรับ Admin 👋</h1>
-  <p class="admin-welcome-subtitle">ภาพรวมระบบและสถิติการสุ่มคำถาม</p>
+<header class="admin-welcome-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 class="admin-welcome-title">ยินดีต้อนรับ Admin 👋</h1>
+    <p class="admin-welcome-subtitle">ภาพรวมระบบและสถิติการสุ่มคำถาม</p>
+  </div>
+  <a href="{% url 'admin_sync_firebase' %}" class="btn-secondary-cancel" style="padding: 0.65rem 1.2rem; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.4rem; background: #ffffff; border: 1px solid #cbd5e1; color: #334155; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" title="ดึงข้อมูลคำถามล่าสุดจาก Firebase Firestore">
+    🔄 ซิงค์กับ Firebase
+  </a>
 </header>
 
 <!-- 4 Top Stat Cards -->

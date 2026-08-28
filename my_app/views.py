@@ -14,7 +14,8 @@ from .forms import QuestionForm, CategoryForm
 from .firebase_config import (
     sync_quiz_log_to_firestore, 
     sync_question_to_firestore, 
-    delete_question_from_firestore
+    delete_question_from_firestore,
+    sync_firestore_to_sqlite
 )
 
 
@@ -24,6 +25,9 @@ from .firebase_config import (
 
 def home_view(request):
     """หน้าหลัก Stage Mode พร้อมบรรยากาศเวทีสปอตไลท์และปุ่มสุ่ม"""
+    if Question.objects.count() == 0:
+        sync_firestore_to_sqlite()
+
     total_questions = Question.objects.filter(is_active=True).count()
     return render(request, "home.html", {
         "total_questions": total_questions,
@@ -32,11 +36,15 @@ def home_view(request):
 
 def random_quiz_view(request):
     """
-    ระบบสุ่มคำถามแบบไม่ซ้ำกันอย่างเด็ดขาด (จนกว่าจะครบทุก 50 ข้อ)
+    ระบบสุ่มคำถามแบบไม่ซ้ำกันอย่างเด็ดขาด
     ใช้ Django Session + request.session.modified = True
     """
     active_questions = list(Question.objects.filter(is_active=True).values_list("id", flat=True))
     
+    if not active_questions:
+        sync_firestore_to_sqlite()
+        active_questions = list(Question.objects.filter(is_active=True).values_list("id", flat=True))
+        
     if not active_questions:
         messages.warning(request, "ยังไม่มีคำถามที่เปิดใช้งานในระบบ กรุณาเพิ่มคำถามก่อน")
         return redirect("home")
@@ -153,6 +161,9 @@ def admin_logout_view(request):
 
 def admin_dashboard_view(request):
     """หน้าแดชบอร์ดหลักของแอดมิน สรุปการ์ด 4 ใบ และกราฟโดนัทหมวดหมู่คำถาม"""
+    if Question.objects.count() == 0:
+        sync_firestore_to_sqlite()
+
     total_questions = Question.objects.count()
     active_questions = Question.objects.filter(is_active=True).count()
     total_categories = Category.objects.count()
@@ -210,7 +221,7 @@ def admin_question_list_view(request):
     difficulty = request.GET.get("difficulty", "")
     status = request.GET.get("status", "")
 
-    questions = Question.objects.select_related("category").order_by("-created_at")
+    questions = Question.objects.select_related("category").order_by("id")
 
     if query:
         questions = questions.filter(text__icontains=query)
@@ -223,7 +234,7 @@ def admin_question_list_view(request):
     elif status == "inactive":
         questions = questions.filter(is_active=False)
 
-    paginator = Paginator(questions, 6)
+    paginator = Paginator(questions, 7)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -241,13 +252,16 @@ def admin_question_list_view(request):
 
 
 def admin_question_add_view(request):
-    """หน้าเพิ่มคำถามใหม่ ฟอร์ม 2 คอลัมน์ตาม Mockup พร้อมซิงค์ Firebase"""
+    """หน้าเพิ่มคำถามใหม่ ฟอร์ม 2 คอลัมน์ พร้อมบันทึกลง Firebase Firestore"""
     if request.method == "POST":
         form = QuestionForm(request.POST)
         if form.is_valid():
             q = form.save()
-            sync_question_to_firestore(q)
-            messages.success(request, "บันทึกคำถามใหม่เรียบร้อยแล้ว (ซิงค์ Firebase สำเร็จ)!")
+            fb_ok = sync_question_to_firestore(q)
+            if fb_ok:
+                messages.success(request, f"บันทึกคำถาม #{q.id} สำเร็จ และจัดเก็บลง Firebase Firestore เรียบร้อยแล้ว! 🔥")
+            else:
+                messages.warning(request, f"บันทึกคำถาม #{q.id} เรียบร้อยแล้ว (กำลังส่งข้อมูลไปยัง Firebase)")
             return redirect("admin_question_list")
     else:
         form = QuestionForm()
@@ -260,14 +274,17 @@ def admin_question_add_view(request):
 
 
 def admin_question_edit_view(request, question_id):
-    """หน้าแก้ไขคำถาม พร้อมซิงค์ Firebase"""
+    """หน้าแก้ไขคำถาม พร้อมอัปเดต Firebase Firestore"""
     question = get_object_or_404(Question, id=question_id)
     if request.method == "POST":
         form = QuestionForm(request.POST, instance=question)
         if form.is_valid():
             q = form.save()
-            sync_question_to_firestore(q)
-            messages.success(request, "อัปเดตข้อมูลคำถามเรียบร้อยแล้ว (ซิงค์ Firebase สำเร็จ)!")
+            fb_ok = sync_question_to_firestore(q)
+            if fb_ok:
+                messages.success(request, f"อัปเดตคำถาม #{q.id} และบันทึกลง Firebase Firestore เรียบร้อยแล้ว! 🔥")
+            else:
+                messages.success(request, f"อัปเดตคำถาม #{q.id} เรียบร้อยแล้ว")
             return redirect("admin_question_list")
     else:
         form = QuestionForm(instance=question)
@@ -286,7 +303,7 @@ def admin_question_delete_view(request, question_id):
     if request.method == "POST":
         delete_question_from_firestore(question.id)
         question.delete()
-        messages.success(request, "ลบคำถามสำเร็จแล้ว")
+        messages.success(request, f"ลบคำถาม #{question_id} ออกจากระบบและ Firebase Firestore สำเร็จ")
         return redirect("admin_question_list")
     return render(request, "confirm_delete.html", {
         "object": question,
@@ -296,13 +313,34 @@ def admin_question_delete_view(request, question_id):
 
 
 def admin_question_toggle_active_view(request, question_id):
-    """เปิด/ปิด การใช้งานคำถามอย่างรวดเร็ว"""
+    """เปิด/ปิด การใช้งานคำถามอย่างรวดเร็ว พร้อมซิงค์ Firebase"""
     question = get_object_or_404(Question, id=question_id)
     question.is_active = not question.is_active
     question.save()
+    sync_question_to_firestore(question)
     status_text = "เปิดใช้งาน" if question.is_active else "ปิดการใช้งาน"
-    messages.info(request, f"{status_text} คำถาม #{question.id} แล้ว")
+    messages.info(request, f"{status_text} คำถาม #{question.id} แล้ว (ซิงค์ Firebase สำเร็จ)")
     return redirect(request.META.get("HTTP_REFERER", "admin_question_list"))
+
+
+def admin_sync_firebase_view(request):
+    """ฟังก์ชันกดซิงค์ข้อมูลคำถามกับ Firebase Firestore ด้วยตนเอง"""
+    synced_count = sync_firestore_to_sqlite()
+    if synced_count > 0:
+        messages.success(request, f"ซิงค์ข้อมูลกับ Firebase Firestore สำเร็จ! (ดึงคำถามมาทั้งหมด {synced_count} ข้อ)")
+    else:
+        messages.warning(request, "ไม่พบข้อมูลคำถามใน Firebase หรือการเชื่อมต่อมีปัญหา")
+    return redirect(request.META.get("HTTP_REFERER", "admin_question_list"))
+
+
+def api_sync_firestore_view(request):
+    """API สำหรับเบื้องหลังซิงค์ Real-time อัตโนมัติเมื่อ Firestore มีการเปลี่ยนแปลง"""
+    synced_count = sync_firestore_to_sqlite()
+    return JsonResponse({
+        "status": "success",
+        "synced_count": synced_count,
+        "total_questions": Question.objects.count()
+    })
 
 
 # ==========================================

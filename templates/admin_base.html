@@ -84,7 +84,40 @@
       </div>
       {% endfor %}
     </div>
-    {% endif %} {% block admin_content %}{% endblock %}
+    {% endif %}
+    {% block admin_content %}{% endblock %}
   </main>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // 🔥 Real-time Firebase Firestore Auto-Sync Engine
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.firebaseDb) {
+      let isInitial = true;
+      try {
+        window.firebaseDb.collection("questions").onSnapshot((snapshot) => {
+          if (isInitial) {
+            isInitial = false;
+            return;
+          }
+          // ซิงค์อัตโนมัติทันทีเมื่อตรวจพบว่าคำถามใน Firebase มีการเพิ่ม ลบ หรือแก้ไข
+          fetch("{% url 'api_sync_firestore' %}")
+            .then(r => r.json())
+            .then(data => {
+              console.log("🔥 [Firebase Auto-Sync]", data);
+              const path = window.location.pathname;
+              if (path.includes("dashboard") || path.includes("questions")) {
+                window.location.reload();
+              }
+            })
+            .catch(err => console.log(err));
+        });
+      } catch(e) {
+        console.log("[Firebase Real-time listener]", e);
+      }
+    }
+  });
+</script>
 {% endblock %}

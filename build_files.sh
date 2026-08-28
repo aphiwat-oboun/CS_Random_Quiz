@@ -13,10 +13,10 @@ mkdir -p staticfiles
 python3 manage.py collectstatic --noinput --clear
 
 echo "=========================================="
-echo "Running Database Migrations & Seeding..."
+echo "Running Database Migrations & Firebase Sync..."
 echo "=========================================="
 python3 manage.py migrate --noinput
-python3 manage.py seed_data
+python3 manage.py sync_firebase
 
 echo "=========================================="
 echo "Vercel Build Completed Successfully!"

@@ -10,9 +10,14 @@
       <p style="color: #64748b; font-size: 0.92rem; margin-top: 0.2rem;">พบคำถามทั้งหมด {{ total_count }} ข้อ</p>
     </div>
     
-    <a href="{% url 'admin_question_add' %}" class="btn-primary-save" style="padding: 0.65rem 1.4rem; font-size: 0.95rem;">
-      ➕ เพิ่มคำถามใหม่
-    </a>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href="{% url 'admin_sync_firebase' %}" class="btn-secondary-cancel" style="padding: 0.65rem 1.2rem; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.4rem; background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155;" title="ดึงข้อมูลคำถามล่าสุดจาก Firebase Firestore">
+        🔄 ซิงค์กับ Firebase
+      </a>
+      <a href="{% url 'admin_question_add' %}" class="btn-primary-save" style="padding: 0.65rem 1.4rem; font-size: 0.95rem;">
+        ➕ เพิ่มคำถามใหม่
+      </a>
+    </div>
   </div>
 
   <!-- Search & Filter Form -->

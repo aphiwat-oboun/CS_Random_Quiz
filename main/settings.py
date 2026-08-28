@@ -65,18 +65,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "main.wsgi.app"
 
-# Database Configuration (ใช้ /tmp สำหรับ Vercel Serverless)
-if os.environ.get("VERCEL"):
-    db_path = "/tmp/db.sqlite3"
-else:
-    db_path = BASE_DIR / "db.sqlite3"
+# Database Configuration (รองรับ PostgreSQL ผ่าน DATABASE_URL หรือ SQLite สำหรับ Local Dev / Fallback)
+import dj_database_url
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": str(db_path),
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    if os.environ.get("VERCEL"):
+        db_path = "/tmp/db.sqlite3"
+    else:
+        db_path = BASE_DIR / "db.sqlite3"
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": str(db_path),
+        }
+    }
 
 # Cookie-based Sessions (Serverless Compatible)
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
