@@ -16,48 +16,34 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write(self.style.NOTICE("=== เริ่มกระบวนการสร้างชุดคำถาม 350 ข้อ (สุ่มกระจายเฉลย A, B, C, D ครบทุกข้อ) ==="))
 
-        # 1. เคลียร์คำถามเดิมทั้งหมดบน Firebase Firestore
+        # 1. ซิงค์คำถามเดิมจาก Firebase Firestore เข้า SQLite ก่อนเพื่อความครบถ้วน
         try:
-            self.stdout.write(self.style.NOTICE("1. เคลียร์คำถามเดิมบน Firebase Firestore..."))
-            old_docs = fetch_all_questions_from_firestore()
-            deleted_count = 0
-            if old_docs:
-                def _del_doc(doc):
-                    d_id = doc.get("name", "").split("/")[-1]
-                    return delete_question_from_firestore(d_id) if d_id else False
-
-                with ThreadPoolExecutor(max_workers=15) as executor:
-                    results = list(executor.map(_del_doc, old_docs))
-                    deleted_count = sum(1 for r in results if r)
-            self.stdout.write(self.style.SUCCESS(f"[OK] ล้างคำถามเดิมใน Firebase เรียบร้อย ({deleted_count} ข้อ)"))
+            self.stdout.write(self.style.NOTICE("1. ตรวจสอบและดึงคำถามล่าสุดจาก Firebase Firestore..."))
+            from my_app.firebase_config import sync_firestore_to_sqlite
+            synced_count = sync_firestore_to_sqlite()
+            self.stdout.write(self.style.SUCCESS(f"[OK] ซิงค์ข้อมูลเดิมเรียบร้อย ({synced_count} ข้อ)"))
         except Exception as e:
             self.stdout.write(self.style.WARNING(f"[Firebase Notice] {e}"))
 
-        # 2. ล้างข้อมูลเดิมใน Local Database (SQLite)
-        QuizLog.objects.all().delete()
-        Question.objects.all().delete()
-        Category.objects.all().delete()
-        self.stdout.write(self.style.SUCCESS("[OK] ล้างข้อมูลใน Local Database (SQLite) เรียบร้อย"))
-
-        # 3. ตรวจสอบ/สร้าง Superuser Admin
+        # 2. ตรวจสอบ/สร้าง Superuser Admin
         if not User.objects.filter(username="admin").exists():
             User.objects.create_superuser("admin", "admin@csquiz.local", "admin1234")
             self.stdout.write(self.style.SUCCESS("[OK] Superuser: admin / admin1234"))
 
-        # 4. สร้างหมวดหมู่
-        cat_basic = Category.objects.create(
+        # 3. สร้างหมวดหมู่ (ถ้ายังไม่มี)
+        cat_basic, _ = Category.objects.get_or_create(
             name="คอมพิวเตอร์เบื้องต้น",
-            color="#0ea5e9"
+            defaults={"color": "#0ea5e9"}
         )
-        cat_cs = Category.objects.create(
+        cat_cs, _ = Category.objects.get_or_create(
             name="สาขาวิทยาการคอมพิวเตอร์เบื้องต้น",
-            color="#8b5cf6"
+            defaults={"color": "#8b5cf6"}
         )
-        self.stdout.write(self.style.SUCCESS(f"[OK] สร้าง 2 หมวดหมู่เรียบร้อย:"))
+        self.stdout.write(self.style.SUCCESS(f"[OK] พร้อมใช้งาน 2 หมวดหมู่:"))
         self.stdout.write(f"  - หมวด 1: {cat_basic.name}")
         self.stdout.write(f"  - หมวด 2: {cat_cs.name}")
 
-        # 5. ข้อมูลคำถามดิบ 350 ข้อ (ระบุคำตอบที่ถูกต้องและตัวเลือกหลอก เพื่อสุ่มตำแหน่ง A, B, C, D อัตโนมัติ)
+        # 4. ข้อมูลคำถามดิบ 350 ข้อ (ระบุคำตอบที่ถูกต้องและตัวเลือกหลอก เพื่อสุ่มตำแหน่ง A, B, C, D อัตโนมัติ)
         raw_items = [
             # =========================================================================
             # [หมวด: คอมพิวเตอร์เบื้องต้น] - ระดับง่าย (ป.3 - ป.6) 40 ข้อ
@@ -2221,12 +2207,20 @@ class Command(BaseCommand):
             f"C={distribution_counts['C']}, D={distribution_counts['D']}"
         ))
 
-        # 7. บันทึกคำถามลงใน SQLite
-        self.stdout.write(self.style.NOTICE(f"3. บันทึกคำถาม {len(prepared_questions)} ข้อลง SQLite..."))
+        # 6. บันทึกคำถามลงใน SQLite (เฉพาะข้อที่ยังไม่มี เพิ่มโดยไม่ลบหรือทับข้อเดิม)
+        self.stdout.write(self.style.NOTICE(f"3. บันทึกคำถามเข้า SQLite (Additive / ไม่ลบข้อมูลเดิม)..."))
         created_questions = []
-        for i, q_data in enumerate(prepared_questions, start=1):
+        existing_texts = set(Question.objects.values_list("text", flat=True))
+        max_id = max(list(Question.objects.values_list("id", flat=True)) + [0])
+
+        for q_data in prepared_questions:
+            # ถ้าคำถามข้อนี้มีอยู่แล้วในระบบ ให้ข้ามไป ไม่สร้างซ้ำและไม่ลบของเดิม
+            if q_data["text"] in existing_texts:
+                continue
+
+            max_id += 1
             question = Question.objects.create(
-                id=i,
+                id=max_id,
                 category=q_data["category"],
                 text=q_data["text"],
                 choice_a=q_data["choice_a"],
@@ -2239,15 +2233,21 @@ class Command(BaseCommand):
                 is_active=q_data["is_active"],
             )
             created_questions.append(question)
-        success_db = len(created_questions)
-        self.stdout.write(self.style.SUCCESS(f"[OK] บันทึกลง SQLite เรียบร้อย ({success_db} ข้อ)"))
+            existing_texts.add(q_data["text"])
 
-        # 8. ซิงค์ไปยัง Firebase Firestore แบบขนาน
-        self.stdout.write(self.style.NOTICE(f"4. ซิงค์คำถาม {success_db} ข้อไปยัง Firebase Firestore..."))
-        with ThreadPoolExecutor(max_workers=15) as executor:
-            sync_results = list(executor.map(sync_question_to_firestore, created_questions))
-            success_fb = sum(1 for r in sync_results if r)
-        self.stdout.write(self.style.SUCCESS(f"[OK] ซิงค์ขึ้น Firebase Firestore สำเร็จ ({success_fb}/{success_db} ข้อ)"))
+        success_db = len(created_questions)
+        total_db = Question.objects.count()
+        self.stdout.write(self.style.SUCCESS(f"[OK] เพิ่มคำถามใหม่สำเร็จ ({success_db} ข้อ) รวมในระบบทั้งหมด {total_db} ข้อ"))
+
+        # 7. ซิงค์ไปยัง Firebase Firestore แบบขนาน
+        self.stdout.write(self.style.NOTICE(f"4. ซิงค์คำถามใหม่ {success_db} ข้อไปยัง Firebase Firestore..."))
+        if created_questions:
+            with ThreadPoolExecutor(max_workers=15) as executor:
+                sync_results = list(executor.map(sync_question_to_firestore, created_questions))
+                success_fb = sum(1 for r in sync_results if r)
+            self.stdout.write(self.style.SUCCESS(f"[OK] ซิงค์ขึ้น Firebase Firestore สำเร็จ ({success_fb}/{success_db} ข้อ)"))
+        else:
+            self.stdout.write(self.style.SUCCESS("[OK] คำถามทั้งหมดมีอยู่ในระบบครบถ้วนแล้ว ไม่ต้องซิงค์เพิ่ม"))
 
         # สรุปผล
         easy_count = sum(1 for q in prepared_questions if q["difficulty"] == "ง่าย")

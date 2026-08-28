@@ -167,32 +167,45 @@
     let initialLoad = true;
     if (window.firebaseDb) {
       try {
+        // Auto-sync in background on load (non-blocking)
+        fetch("{% url 'api_sync_firestore' %}").catch(() => {});
+
         window.firebaseDb.collection("questions").onSnapshot((snapshot) => {
           if (initialLoad) {
             initialLoad = false;
             return;
           }
-          // เมื่อตรวจพบการเปลี่ยนแปลง (เพิ่ม/ลบ/แก้ไข) จากเพื่อนเครื่องอื่น
+          // เมื่อตรวจพบการเปลี่ยนแปลง (มีเพื่อนเพิ่ม/แก้ไข/ลบข้อความ)
+          let hasChanges = false;
           snapshot.docChanges().forEach((change) => {
-            if (change.type === "added" || change.type === "removed" || change.type === "modified") {
-              const toast = document.createElement('div');
-              toast.style.position = 'fixed';
-              toast.style.bottom = '2rem';
-              toast.style.right = '2rem';
-              toast.style.background = '#10b981';
-              toast.style.color = '#ffffff';
-              toast.style.padding = '0.75rem 1.5rem';
-              toast.style.borderRadius = '9999px';
-              toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
-              toast.style.zIndex = '9999';
-              toast.style.fontWeight = '600';
-              toast.innerHTML = '🔥 มีการอัปเดตข้อมูลคำถามใน Firebase! <a href="javascript:location.reload()" style="color:#fff; text-decoration:underline; margin-left:0.5rem;">คลิกเพื่อดู</a>';
-              document.body.appendChild(toast);
-              setTimeout(() => {
-                location.reload();
-              }, 2500);
+            if (["added", "modified", "removed"].includes(change.type)) {
+              hasChanges = true;
             }
           });
+
+          if (hasChanges) {
+            // ซิงค์เข้า SQLite ทันทีผ่าน API แล้วรีเฟรชหน้าจออัตโนมัติ
+            fetch("{% url 'api_sync_firestore' %}")
+              .then(() => {
+                const toast = document.createElement('div');
+                toast.style.position = 'fixed';
+                toast.style.bottom = '2rem';
+                toast.style.right = '2rem';
+                toast.style.background = '#10b981';
+                toast.style.color = '#ffffff';
+                toast.style.padding = '0.75rem 1.5rem';
+                toast.style.borderRadius = '9999px';
+                toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+                toast.style.zIndex = '9999';
+                toast.style.fontWeight = '600';
+                toast.innerHTML = '🔥 มีเพื่อนเพิ่มคำถามใหม่ในระบบ! กำลังอัปเดตหน้าจออัตโนมัติ...';
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                  location.reload();
+                }, 1200);
+              })
+              .catch((err) => console.log("[Auto Sync Notice]", err));
+          }
         });
       } catch(e) {
         console.log("[Firebase List Listener]", e);

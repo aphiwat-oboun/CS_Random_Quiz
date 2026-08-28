@@ -185,11 +185,10 @@ def sync_firestore_to_sqlite():
                 valid_ids.append(obj.id)
             synced_count += 1
 
-        # ลบคำถามใน SQLite ที่ไม่มีอยู่ใน Firestore ออกเพื่อความตรงกัน 100%
-        if valid_ids:
-            Question.objects.exclude(id__in=valid_ids).delete()
-            # ลบหมวดหมู่ที่ไม่มีคำถามผูกอยู่
-            Category.objects.filter(questions__isnull=True).delete()
+        # ซิงค์คำถามใน SQLite ที่ยังไม่มีบน Firestore ส่งขึ้นไปเพิ่ม (Additive Two-way Merge ไม่ลบข้อมูลเดิม)
+        missing_on_cloud = Question.objects.exclude(id__in=valid_ids)
+        for local_q in missing_on_cloud:
+            sync_question_to_firestore(local_q)
 
         return synced_count
     except Exception as e:
