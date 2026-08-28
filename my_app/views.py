@@ -234,14 +234,16 @@ def admin_question_list_view(request):
     elif status == "inactive":
         questions = questions.filter(is_active=False)
 
-    paginator = Paginator(questions, 7)
+    paginator = Paginator(questions, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    custom_page_range = paginator.get_elided_page_range(page_obj.number, on_each_side=2, on_ends=1)
 
     categories = Category.objects.all()
 
     return render(request, "question_list.html", {
         "page_obj": page_obj,
+        "custom_page_range": custom_page_range,
         "categories": categories,
         "query": query,
         "selected_category": category_id,
@@ -408,9 +410,11 @@ def admin_logs_view(request):
     paginator = Paginator(logs, 20)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    custom_page_range = paginator.get_elided_page_range(page_obj.number, on_each_side=2, on_ends=1)
 
     return render(request, "log_list.html", {
         "page_obj": page_obj,
+        "custom_page_range": custom_page_range,
         "total_count": logs.count(),
     })
 

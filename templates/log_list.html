@@ -55,20 +55,26 @@
   <!-- Pagination -->
   {% if page_obj.has_other_pages %}
   <div class="pagination-container">
-    <span>แสดงหน้า {{ page_obj.number }} จากทั้งหมด {{ page_obj.paginator.num_pages }} หน้า</span>
+    <span class="pagination-info">แสดงหน้า {{ page_obj.number }} จากทั้งหมด {{ page_obj.paginator.num_pages }} หน้า (ทั้งหมด {{ total_count }} รายการ)</span>
     <div class="pagination-links">
       {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">« ก่อนหน้า</a>
+      <a href="?page=1" class="page-btn" title="หน้าแรก">««</a>
+      <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">‹ ก่อนหน้า</a>
       {% endif %}
       
-      {% for num in page_obj.paginator.page_range %}
-      <a href="?page={{ num }}" class="page-btn {% if page_obj.number == num %}active{% endif %}">
-        {{ num }}
-      </a>
+      {% for num in custom_page_range %}
+        {% if num == page_obj.paginator.ELLIPSIS %}
+        <span class="page-ellipsis">…</span>
+        {% else %}
+        <a href="?page={{ num }}" class="page-btn {% if page_obj.number == num %}active{% endif %}">
+          {{ num }}
+        </a>
+        {% endif %}
       {% endfor %}
 
       {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}" class="page-btn">ถัดไป »</a>
+      <a href="?page={{ page_obj.next_page_number }}" class="page-btn">ถัดไป ›</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}" class="page-btn" title="หน้าสุดท้าย">»»</a>
       {% endif %}
     </div>
   </div>
