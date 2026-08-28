@@ -5,10 +5,10 @@ from my_app.firebase_config import sync_question_to_firestore, delete_question_f
 
 
 class Command(BaseCommand):
-    help = "สร้างชุดคำถามระดับ ป.3 - ม.3 คำตอบสั้นกระชับ 100 ข้อ ซิงค์เข้า Firebase Firestore และ SQLite"
+    help = "สร้างชุดคำถามระดับ ป.3 - ม.3 คำตอบสั้นกระชับทุกข้อ 100 ข้อ ซิงค์เข้า Firebase Firestore และ SQLite"
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.NOTICE("=== เริ่มกระบวนการสร้างชุดคำถามระดับ ป.3 - ม.3 (ตัวเลือกสั้นกระชับ 100 ข้อ) ==="))
+        self.stdout.write(self.style.NOTICE("=== เริ่มกระบวนการสร้างชุดคำถามระดับ ป.3 - ม.3 (ตัวเลือกสั้นกระชับทุกข้อ 100 ข้อ) ==="))
 
         # 1. เคลียร์คำถามเดิมทั้งหมดบน Firebase Firestore
         try:
@@ -52,76 +52,76 @@ class Command(BaseCommand):
         self.stdout.write(f"  - หมวด 1: {cat_basic.name} (90 ข้อ: ง่าย 40, ปานกลาง 25, ยาก 25)")
         self.stdout.write(f"  - หมวด 2: {cat_cs.name} (10 ข้อ)")
 
-        # 5. ชุดคำถาม 100 ข้อ ระดับ ป.3 - ม.3 (ตัวเลือกสั้น กระชับ ทุกข้อ)
+        # 5. ชุดคำถาม 100 ข้อ ระดับ ป.3 - ม.3 (ตัวเลือกสั้นกระชับทุกข้อ)
         raw_questions = [
             # =========================================================================
             # [หมวด: คอมพิวเตอร์เบื้องต้น] - ระดับง่าย (ป.3 - ป.6) 40 ข้อ
             # =========================================================================
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "อุปกรณ์ใดทำหน้าที่เหมือน 'หนู' ใช้เลื่อนลูกศรและคลิกเลือกบนหน้าจอ?",
+                "text": "อุปกรณ์ใดทำหน้าที่เหมือน 'หนู' ใช้เลื่อนลูกศรและคลิกบนหน้าจอ?",
                 "choice_a": "เมาส์ (Mouse)", "choice_b": "คีย์บอร์ด", "choice_c": "ลำโพง", "choice_d": "พัดลม",
-                "correct_choice": "A", "explanation": "เมาส์ (Mouse) ใช้สำหรับเลื่อนลูกศรและคลิกสั่งงานบนหน้าจอคอมพิวเตอร์"
+                "correct_choice": "A", "explanation": "เมาส์ (Mouse) ใช้เลื่อนเคอร์เซอร์และคลิกเลือกเมนูบนจอภาพ"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "หากต้องการพิมพ์ข้อความหรือตัวหนังสือเข้าสู่คอมพิวเตอร์ ต้องใช้อุปกรณ์ใด?",
+                "text": "หากต้องการพิมพ์ข้อความหรือตัวหนังสือเข้าคอมพิวเตอร์ ต้องใช้อุปกรณ์ใด?",
                 "choice_a": "คีย์บอร์ด (Keyboard)", "choice_b": "สแกนเนอร์", "choice_c": "จอภาพ", "choice_d": "ไมโครโฟน",
-                "correct_choice": "A", "explanation": "คีย์บอร์ดใช้พิมพ์ตัวอักษร ก-ฮ, A-Z และตัวเลขเข้าสู่คอมพิวเตอร์"
+                "correct_choice": "A", "explanation": "คีย์บอร์ดใช้พิมพ์ตัวอักษรและตัวเลขเข้าสู่คอมพิวเตอร์"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "ปุ่มลัดสากล 'Ctrl + C' บนแป้นพิมพ์ มีไว้ใช้ทำอะไร?",
-                "choice_a": "คัดลอก (Copy)", "choice_b": "ตัดข้อความ (Cut)", "choice_c": "วางข้อมูล (Paste)", "choice_d": "ลบไฟล์ (Delete)",
-                "correct_choice": "A", "explanation": "Ctrl + C คือปุ่มลัดสำหรับคำสั่ง Copy (คัดลอก)"
+                "text": "ปุ่มลัดสากล 'Ctrl + C' มีไว้ใช้ทำอะไร?",
+                "choice_a": "คัดลอก (Copy)", "choice_b": "ตัด (Cut)", "choice_c": "วาง (Paste)", "choice_d": "ลบ (Delete)",
+                "correct_choice": "A", "explanation": "Ctrl + C คือปุ่มลัด Copy สำหรับคัดลอกข้อความหรือไฟล์"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "เมื่อกด 'Ctrl + C' แล้ว ต้องกดปุ่มใดคู่กันเพื่อ 'วาง' (Paste) ข้อความ?",
-                "choice_a": "Ctrl + V", "choice_b": "Ctrl + Z", "choice_c": "Ctrl + A", "choice_d": "Ctrl + P",
-                "correct_choice": "A", "explanation": "Ctrl + V ใช้สำหรับคำสั่ง Paste (วางสิ่งที่คัดลอกไว้)"
+                "text": "ปุ่มลัด 'Ctrl + V' ใช้งานคู่กับ Ctrl + C เพื่อทำอะไร?",
+                "choice_a": "วางข้อมูล (Paste)", "choice_b": "ย้อนกลับ (Undo)", "choice_c": "เลือกทั้งหมด (All)", "choice_d": "สั่งพิมพ์ (Print)",
+                "correct_choice": "A", "explanation": "Ctrl + V ใช้สำหรับวาง (Paste) สิ่งที่คัดลอกไว้"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "หากพิมพ์ผิดหรือเผลอลบงาน สามารถกดย้อนกลับ (Undo) ด้วยปุ่มใด?",
+                "text": "หากพิมพ์ข้อความผิดพลาด สามารถกดย้อนกลับ (Undo) ด้วยปุ่มใด?",
                 "choice_a": "Ctrl + Z", "choice_b": "Ctrl + S", "choice_c": "Ctrl + O", "choice_d": "Ctrl + N",
-                "correct_choice": "A", "explanation": "Ctrl + Z คือคำสั่งย้อนกลับ (Undo) เพื่อยกเลิกสิ่งที่เพิ่งทำผิด"
+                "correct_choice": "A", "explanation": "Ctrl + Z คือคำสั่ง Undo เพื่อย้อนกลับการกระทำล่าสุด"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "ปุ่มลัด 'Ctrl + S' มีประโยชน์อย่างไรเวลาทำงาน?",
+                "text": "ปุ่มลัด 'Ctrl + S' นิยมกดเป็นประจำเพื่อทำอะไร?",
                 "choice_a": "บันทึกงาน (Save)", "choice_b": "ปิดคอมพิวเตอร์", "choice_c": "เปิดเพลง", "choice_d": "เพิ่มเสียง",
-                "correct_choice": "A", "explanation": "Ctrl + S ใช้สำหรับ Save (บันทึกงาน) ป้องกันไฟล์สูญหาย"
+                "correct_choice": "A", "explanation": "Ctrl + S ใช้บันทึกงาน (Save) เพื่อป้องกันงานสูญหาย"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "ปุ่มยาวที่สุดแถวล่างสุดบนคีย์บอร์ดคือปุ่มใด?",
+                "text": "ปุ่มที่ยาวที่สุดบนแป้นพิมพ์แถวล่างสุด เรียกว่าอะไร?",
                 "choice_a": "Spacebar", "choice_b": "Enter", "choice_c": "Shift", "choice_d": "Caps Lock",
-                "correct_choice": "A", "explanation": "Spacebar (สเปซบาร์) เป็นปุ่มยาวที่สุด ใช้เคาะเว้นวรรคตัวอักษร"
+                "correct_choice": "A", "explanation": "Spacebar ใช้สำหรับเคาะเว้นวรรคช่องว่างระหว่างตัวอักษร"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "ปุ่มใดบนคีย์บอร์ดที่ใช้สำหรับ 'ขึ้นบรรทัดใหม่' หรือ 'ตกลง/ยืนยัน'?",
+                "text": "ปุ่มใดใช้สำหรับ 'ขึ้นบรรทัดใหม่' หรือ 'ตกลง/ยืนยัน' คำสั่ง?",
                 "choice_a": "Enter", "choice_b": "Esc", "choice_c": "Tab", "choice_d": "Alt",
-                "correct_choice": "A", "explanation": "ปุ่ม Enter ใช้ยืนยันคำสั่ง หรือขึ้นบรรทัดใหม่เวลาพิมพ์งาน"
+                "correct_choice": "A", "explanation": "ปุ่ม Enter ใช้ยืนยันคำสั่ง หรือขึ้นบรรทัดใหม่ในการพิมพ์งาน"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
                 "text": "ปุ่มใดที่เมื่อกดค้างไว้ จะช่วยให้พิมพ์ตัวพิมพ์ใหญ่ภาษาอังกฤษได้?",
                 "choice_a": "Shift", "choice_b": "Ctrl", "choice_c": "Alt", "choice_d": "Tab",
-                "correct_choice": "A", "explanation": "กด Shift ค้างไว้แล้วกดตัวอักษรจะได้ตัวพิมพ์ใหญ่ (Capital Letters)"
+                "correct_choice": "A", "explanation": "กด Shift ค้างไว้แล้วกดตัวอักษรจะได้ตัวพิมพ์ใหญ่"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "ปุ่ม 'Caps Lock' มีหน้าที่อะไรในการพิมพ์ตัวหนังสือ?",
+                "text": "ปุ่ม 'Caps Lock' มีหน้าที่อะไรในการพิมพ์งาน?",
                 "choice_a": "ล็อกพิมพ์ตัวใหญ่ตลอด", "choice_b": "ล็อกหน้าจอคอม", "choice_c": "ล็อกไม่ให้ลบไฟล์", "choice_d": "ปิดเสียงลำโพง",
-                "correct_choice": "A", "explanation": "Caps Lock ช่วยให้พิมพ์ตัวพิมพ์ใหญ่ภาษาอังกฤษได้ต่อเนื่อง"
+                "correct_choice": "A", "explanation": "Caps Lock ช่วยให้พิมพ์ตัวพิมพ์ใหญ่ต่อเนื่องโดยไม่ต้องกด Shift ค้าง"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
                 "text": "อุปกรณ์ชิ้นใดเปรียบเหมือน 'สมอง' ของคอมพิวเตอร์?",
                 "choice_a": "ซีพียู (CPU)", "choice_b": "เมาส์ (Mouse)", "choice_c": "คีย์บอร์ด (Keyboard)", "choice_d": "จอภาพ (Monitor)",
-                "correct_choice": "A", "explanation": "CPU (Central Processing Unit) ทำหน้าที่ประมวลผลกลางเหมือนสมอง"
+                "correct_choice": "A", "explanation": "CPU ทำหน้าที่ประมวลผลกลางเปรียบเหมือนสมองของคอมพิวเตอร์"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
@@ -131,7 +131,7 @@ class Command(BaseCommand):
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
-                "text": "หากต้องการพูดคุยเสียงกับเพื่อนหรือคุณครูออนไลน์ ต้องใช้อุปกรณ์ใด?",
+                "text": "หากต้องการพูดคุยเสียงกับคุณครูหรือเพื่อนออนไลน์ ต้องใช้อุปกรณ์ใด?",
                 "choice_a": "ไมโครโฟน", "choice_b": "ลำโพง", "choice_c": "หูฟัง", "choice_d": "เมาส์",
                 "correct_choice": "A", "explanation": "ไมโครโฟนทำหน้าที่รับเสียงพูดของเราส่งเข้าคอมพิวเตอร์"
             },
@@ -151,7 +151,7 @@ class Command(BaseCommand):
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
                 "text": "โปรแกรมใดบน Windows ที่เด็ก ๆ นิยมใช้ฝึกวาดภาพและระบายสี?",
                 "choice_a": "Paint", "choice_b": "Excel", "choice_c": "Word", "choice_d": "Calculator",
-                "correct_choice": "A", "explanation": "Paint เป็นโปรแกรมวาดภาพและระบายสีพื้นฐานใน Windows"
+                "correct_choice": "A", "explanation": "Paint เป็นโปรแกรมวาดภาพและระบายสีรูปทรงพื้นฐาน"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
@@ -204,7 +204,7 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
                 "text": "รหัสผ่าน (Password) ที่ปลอดภัย ควรตั้งแบบใด?",
-                "choice_a": "ผสมตัวหนังสือและตัวเลข", "choice_b": "ใช้ตัวเลข 123456", "choice_c": "ใช้วันเกิดตัวเอง", "choice_d": "บอกให้เพื่อนทุกคนรู้",
+                "choice_a": "ผสมตัวหนังสือและตัวเลข", "choice_b": "ใช้ตัวเลข 123456", "choice_c": "ใช้วันเกิดตัวเอง", "choice_d": "บอกเพื่อนทุกคน",
                 "correct_choice": "A", "explanation": "รหัสผ่านที่ดีควรเดายากและผสมตัวอักษรกับตัวเลข"
             },
             {
@@ -282,13 +282,13 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
                 "text": "ข้อใดเป็นท่านั่งใช้งานคอมพิวเตอร์ที่ถูกต้องที่สุด?",
-                "choice_a": "นั่งหลังตรง พักสายตาทุก 30 นาที", "choice_b": "นอนคว่ำเล่นในห้องมืด", "choice_c": "วางแก้วน้ำบนเคสคอม", "choice_d": "จ้องจอนาน 10 ชั่วโมงติด",
+                "choice_a": "นั่งหลังตรงพักสายตา", "choice_b": "นอนคว่ำเล่นในที่มืด", "choice_c": "วางแก้วน้ำบนเคสคอม", "choice_d": "จ้องจอนาน 10 ชม.ติด",
                 "correct_choice": "A", "explanation": "การนั่งหลังตรงและพักสายตาทุก 20-30 นาทีช่วยถนอมสายตาและสุขภาพ"
             },
             {
                 "category": cat_basic, "difficulty": "ง่าย", "is_active": True,
                 "text": "หากหน้าจอคอมพิวเตอร์มีฝุ่นเกาะ ควรทำความสะอาดอย่างไร?",
-                "choice_a": "ใช้ผ้าไมโครไฟเบอร์นุ่ม ๆ เช็ด", "choice_b": "เอาน้ำสาดใส่หน้าจอ", "choice_c": "ใช้แปรงลวดขัด", "choice_d": "เอาน้ำยาล้างจานราด",
+                "choice_a": "ใช้ผ้านุ่มไมโครไฟเบอร์", "choice_b": "เอาน้ำสาดใส่หน้าจอ", "choice_c": "ใช้แปรงลวดขัด", "choice_d": "เอาน้ำยาล้างจานราด",
                 "correct_choice": "A", "explanation": "ควรใช้ผ้าไมโครไฟเบอร์แห้งนุ่มเช็ดหน้าจอเบา ๆ หลังปิดจอแล้ว"
             },
             {
@@ -346,13 +346,13 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "ไวรัสคอมพิวเตอร์ (Computer Virus) คืออะไร?",
-                "choice_a": "โปรแกรมก่อกวนหรือทำลายข้อมูล", "choice_b": "เชื้อโรคที่ทำให้คนป่วย", "choice_c": "ฝุ่นในพัดลมซีพียู", "choice_d": "สายไฟที่ขาดในเครื่อง",
+                "choice_a": "โปรแกรมทำลายข้อมูล", "choice_b": "เชื้อโรคที่ทำให้คนป่วย", "choice_c": "ฝุ่นในพัดลมซีพียู", "choice_d": "สายไฟที่ขาดในเครื่อง",
                 "correct_choice": "A", "explanation": "ไวรัสคอมพิวเตอร์คือซอฟต์แวร์ไม่พึงประสงค์ที่มุ่งทำลายหรือขโมยข้อมูล"
             },
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "โปรแกรมแอนติไวรัส (Antivirus) มีหน้าที่หลักคืออะไร?",
-                "choice_a": "ตรวจจับและกำจัดไวรัส", "choice_b": "ทำให้เล่นเกมชนะง่ายขึ้น", "choice_c": "เพิ่มความเร็วพิมพ์งาน", "choice_d": "ปรับหน้าจอให้สว่าง",
+                "choice_a": "ตรวจจับและกำจัดไวรัส", "choice_b": "ช่วยให้เล่นเกมชนะ", "choice_c": "เพิ่มความเร็วพิมพ์งาน", "choice_d": "ปรับหน้าจอให้สว่าง",
                 "correct_choice": "A", "explanation": "Antivirus ช่วยตรวจจับ ป้องกัน และกำจัดภัยคุกคามในคอมพิวเตอร์"
             },
             {
@@ -364,19 +364,19 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "ภัยคุกคามแบบ 'Phishing' (ฟิชชิ่ง) มีลักษณะการหลอกลวงอย่างไร?",
-                "choice_a": "ส่งลิงก์ปลอมมาหลอกขโมยรหัสผ่าน", "choice_b": "ปาหินใส่หน้าจอคอม", "choice_c": "พิมพ์แป้นพิมพ์เร็วเกินไป", "choice_d": "เปิดเพลงเสียงดังเกินไป",
+                "choice_a": "ส่งลิงก์ปลอมหลอกเอาข้อมูล", "choice_b": "ปาหินใส่หน้าจอคอม", "choice_c": "พิมพ์แป้นพิมพ์เร็วไป", "choice_d": "เปิดเพลงเสียงดังไป",
                 "correct_choice": "A", "explanation": "Phishing คือการทำหน้าเว็บหรืออีเมลปลอมเพื่อหลอกให้เหยื่อกรอกรหัสผ่าน"
             },
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "ระบบยืนยันตัวตน 2 ชั้น (2FA) ช่วยเพิ่มความปลอดภัยอย่างไร?",
-                "choice_a": "ต้องใส่รหัสผ่านคู่กับรหัส OTP", "choice_b": "ให้เพื่อนช่วยกดล็อกอิน 2 คน", "choice_c": "พิมพ์รหัสผ่านเดิม 2 รอบ", "choice_d": "เปิดคอม 2 เครื่องพร้อมกัน",
+                "choice_a": "ใส่รหัสผ่านคู่กับ OTP", "choice_b": "ล็อกอินพร้อมกัน 2 คน", "choice_c": "พิมพ์รหัสเดิม 2 รอบ", "choice_d": "เปิดคอม 2 เครื่องพร้อมกัน",
                 "correct_choice": "A", "explanation": "2FA เพิ่มความปลอดภัยโดยต้องใช้รหัส OTP จากมือถือร่วมกับรหัสผ่าน"
             },
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "ไฟล์บีบอัดนามสกุล '.zip' มีประโยชน์อย่างไร?",
-                "choice_a": "รวมไฟล์และย่อขนาดให้เล็กลง", "choice_b": "แปลงรูปภาพเป็นเพลง", "choice_c": "เพิ่มความเร็วพัดลม", "choice_d": "ทำให้ภาพคมชัด 10 เท่า",
+                "choice_a": "รวมไฟล์และย่อขนาดลง", "choice_b": "แปลงรูปภาพเป็นเพลง", "choice_c": "เพิ่มความเร็วพัดลม", "choice_d": "ทำให้ภาพคมชัด 10 เท่า",
                 "correct_choice": "A", "explanation": "ไฟล์ Zip ช่วยรวมหลาย ๆ ไฟล์เข้าด้วยกันและลดขนาดไฟล์ให้ส่งต่อง่าย"
             },
             {
@@ -400,7 +400,7 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "สัญลักษณ์แม่กุญแจและ 'https://' บนเว็บเบราว์เซอร์ หมายถึงอะไร?",
-                "choice_a": "เว็บมีความปลอดภัย มีการเข้ารหัส", "choice_b": "เว็บนี้ต้องเสียเงินเข้าชม", "choice_c": "เว็บสำหรับเล่นเกมเท่านั้น", "choice_d": "เว็บกำลังถูกไวรัสโจมตี",
+                "choice_a": "เว็บมีการเข้ารหัสปลอดภัย", "choice_b": "เว็บนี้ต้องเสียเงินเข้าชม", "choice_c": "เว็บสำหรับเล่นเกมเท่านั้น", "choice_d": "เว็บกำลังถูกไวรัสโจมตี",
                 "correct_choice": "A", "explanation": "HTTPS มีการเข้ารหัสความปลอดภัย ป้องกันข้อมูลถูกแอบดักจับ"
             },
             {
@@ -412,13 +412,13 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "พาวเวอร์ซัพพลาย (Power Supply Unit : PSU) มีหน้าที่อะไร?",
-                "choice_a": "แปลงและจ่ายไฟฟ้าให้คอมพิวเตอร์", "choice_b": "เปิดเสียงเพลงเมื่อเปิดเครื่อง", "choice_c": "ทำความสะอาดหน้าจอ", "choice_d": "บันทึกรูปภาพ",
+                "choice_a": "แปลงและจ่ายไฟให้เครื่อง", "choice_b": "เปิดเสียงเพลงเมื่อเปิดเครื่อง", "choice_c": "ทำความสะอาดหน้าจอ", "choice_d": "บันทึกรูปภาพ",
                 "correct_choice": "A", "explanation": "PSU ทำหน้าที่แปลงไฟฟ้าบ้านและจ่ายพลังงานไฟฟ้าไปเลี้ยงทุกชิ้นส่วนในคอมพิวเตอร์"
             },
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "เครือข่าย 'LAN' หมายถึงการเชื่อมต่อแบบใด?",
-                "choice_a": "เครือข่ายในพื้นที่ใกล้ เช่น ห้องเรียน", "choice_b": "เครือข่ายดาวเทียมรอบโลก", "choice_c": "เครือข่ายใต้มหาสมุทร", "choice_d": "เครือข่ายสถานีอวกาศ",
+                "choice_a": "เครือข่ายระยะใกล้ในห้อง", "choice_b": "เครือข่ายดาวเทียมรอบโลก", "choice_c": "เครือข่ายใต้มหาสมุทร", "choice_d": "เครือข่ายสถานีอวกาศ",
                 "correct_choice": "A", "explanation": "LAN (Local Area Network) คือเครือข่ายท้องถิ่นระยะใกล้ เช่น ในห้องคอมพิวเตอร์"
             },
             {
@@ -430,13 +430,13 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "กล้องเว็บแคม (Webcam) จัดเป็นอุปกรณ์ประเภทใด?",
-                "choice_a": "อุปกรณ์รับเข้าข้อมูล (Input)", "choice_b": "อุปกรณ์แสดงผล (Output)", "choice_c": "อุปกรณ์ประมวลผล", "choice_d": "อุปกรณ์จ่ายไฟ",
+                "choice_a": "อุปกรณ์รับข้อมูล (Input)", "choice_b": "อุปกรณ์แสดงผล (Output)", "choice_c": "อุปกรณ์ประมวลผล", "choice_d": "อุปกรณ์จ่ายไฟ",
                 "correct_choice": "A", "explanation": "Webcam รับภาพจากภายนอกเข้าสู่ระบบคอมพิวเตอร์ จึงเป็นอุปกรณ์ Input"
             },
             {
                 "category": cat_basic, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "โปรแกรมแบบ 'Open Source' มีความหมายว่าอย่างไร?",
-                "choice_a": "เปิดเผยโค้ดให้พัฒนาต่อยอดได้ฟรี", "choice_b": "ต้องเปิดฝาเครื่องเวลาใช้งาน", "choice_c": "โปรแกรมที่มีราคาแพงที่สุด", "choice_d": "ห้ามคนอื่นดูโค้ด",
+                "choice_a": "เปิดเผยโค้ดให้พัฒนาฟรี", "choice_b": "ต้องเปิดฝาเครื่องเวลาใช้", "choice_c": "โปรแกรมราคาแพงที่สุด", "choice_d": "ห้ามคนอื่นดูโค้ด",
                 "correct_choice": "A", "explanation": "Open Source คือซอฟต์แวร์ที่เปิดเผยซอร์สโค้ดให้ทุกคนนำไปพัฒนาต่อยอดได้ฟรี"
             },
             {
@@ -464,49 +464,49 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "ระบบ 'DNS' (Domain Name System) ในอินเทอร์เน็ตมีหน้าที่อะไร?",
-                "choice_a": "แปลงชื่อเว็บเป็นเลข IP Address", "choice_b": "ล้างไวรัสในอีเมล", "choice_c": "ปรับพัดลมเคส", "choice_d": "ดาวน์โหลดเกม",
+                "choice_a": "แปลงชื่อเว็บเป็นเลข IP", "choice_b": "ล้างไวรัสในอีเมล", "choice_c": "ปรับพัดลมเคส", "choice_d": "ดาวน์โหลดเกม",
                 "correct_choice": "A", "explanation": "DNS แปลงชื่อเว็บไซต์ที่จำง่ายให้กลายเป็นหมายเลข IP Address"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "ระบบ 64-bit ดีกว่าระบบ 32-bit ในเรื่องการรองรับขนาดแรม (RAM) อย่างไร?",
-                "choice_a": "รองรับแรมได้มากกว่า 4 GB", "choice_b": "ทำงานเร็วกว่าเสมอ 10 เท่า", "choice_c": "ใช้ได้เฉพาะเครื่องไม่มีฮาร์ดดิสก์", "choice_d": "รองรับแรมได้เท่ากัน",
+                "choice_a": "รองรับแรมได้เกิน 4 GB", "choice_b": "ทำงานเร็วกว่าเสมอ 10 เท่า", "choice_c": "ใช้ได้เฉพาะเครื่องไม่มีดิสก์", "choice_d": "รองรับแรมได้เท่ากัน",
                 "correct_choice": "A", "explanation": "ระบบ 32-bit รองรับ RAM สูงสุดเพียง 4 GB ส่วน 64-bit รองรับ RAM ได้มหาศาล"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "อาการจอฟ้า 'Blue Screen of Death' (BSOD) มักเกิดจากสาเหตุใด?",
-                "choice_a": "ฮาร์ดแวร์หรือไดรเวอร์มีข้อผิดพลาด", "choice_b": "หน้าจอเปลี่ยนสีตามอากาศ", "choice_c": "เปิดโปรแกรมเกิน 3 หน้าต่าง", "choice_d": "ปุ่มแป้นพิมพ์หลุด",
+                "choice_a": "ฮาร์ดแวร์/ไดรเวอร์มีปัญหา", "choice_b": "หน้าจอเปลี่ยนสีตามอากาศ", "choice_c": "เปิดโปรแกรมเกิน 3 หน้า", "choice_d": "ปุ่มแป้นพิมพ์หลุด",
                 "correct_choice": "A", "explanation": "BSOD คือหน้าจอแจ้งเตือนข้อผิดพลาดรุนแรงระดับฮาร์ดแวร์หรือไดรเวอร์ระบบ"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "โปรแกรมประเภท 'Driver' (ไดรเวอร์) มีความสำคัญอย่างไร?",
-                "choice_a": "เป็นตัวกลางสั่งการฮาร์ดแวร์", "choice_b": "เป็นเกมแข่งรถ", "choice_c": "เป็นโปรแกรมฟังเพลง", "choice_d": "เป็นสายไฟเครื่องพิมพ์",
+                "choice_a": "ตัวกลางสั่งการฮาร์ดแวร์", "choice_b": "เป็นเกมแข่งรถ", "choice_c": "เป็นโปรแกรมฟังเพลง", "choice_d": "เป็นสายไฟเครื่องพิมพ์",
                 "correct_choice": "A", "explanation": "Driver ทำหน้าที่เป็นตัวแปลคำสั่งให้ระบบปฏิบัติการสั่งการฮาร์ดแวร์ได้ถูกต้อง"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "ซิลิโคนระบายความร้อน (Thermal Paste) ทาไว้เพื่ออะไร?",
-                "choice_a": "ถ่ายเทความร้อนจาก CPU ไปพัดลม", "choice_b": "ติดกาวไม่ให้ CPU หลุด", "choice_c": "เพิ่มแรมให้คอมพิวเตอร์", "choice_d": "ป้องกันไฟฟ้าลัดวงจร",
+                "choice_a": "ส่งความร้อนจาก CPU ไปพัดลม", "choice_b": "ติดกาวไม่ให้ CPU หลุด", "choice_c": "เพิ่มแรมให้คอมพิวเตอร์", "choice_d": "ป้องกันไฟฟ้าลัดวงจร",
                 "correct_choice": "A", "explanation": "Thermal Paste ช่วยส่งผ่านความร้อนจากหน้าสัมผัสของ CPU ไปยังพัดลมระบายความร้อน"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "หน่วยความจำแคช 'Cache Memory' ใน CPU มีประโยชน์อย่างไร?",
-                "choice_a": "ช่วยส่งข้อมูลบ่อยให้ CPU เร็วขึ้น", "choice_b": "เก็บไฟล์หนังขนาดใหญ่", "choice_c": "ทำความสะอาดเคส", "choice_d": "ลดการกินไฟของจอ",
+                "choice_a": "ส่งข้อมูลที่ใช้บ่อยให้ CPU เร็วขึ้น", "choice_b": "เก็บไฟล์หนังขนาดใหญ่", "choice_c": "ทำความสะอาดเคส", "choice_d": "ลดการกินไฟของจอ",
                 "correct_choice": "A", "explanation": "Cache Memory ใน CPU มีความเร็วสูงมาก ช่วยพักข้อมูลที่ใช้บ่อยเพื่อลดเวลาเรียกใช้งาน"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "มัลแวร์ประเภท 'Ransomware' (มัลแวร์เรียกค่าไถ่) ทำร้ายผู้ใช้อย่างไร?",
-                "choice_a": "ล็อกไฟล์ในเครื่องเพื่อเรียกเงิน", "choice_b": "เปิดเพลงเสียงดังตลอด", "choice_c": "เปลี่ยนภาพหน้าจอเป็นสีดำ", "choice_d": "ปิดเครื่องทุก 5 นาที",
+                "choice_a": "ล็อกไฟล์เพื่อเรียกเงิน", "choice_b": "เปิดเพลงเสียงดังตลอด", "choice_c": "เปลี่ยนภาพหน้าจอเป็นสีดำ", "choice_d": "ปิดเครื่องทุก 5 นาที",
                 "correct_choice": "A", "explanation": "Ransomware จะเข้ารหัสล็อกไฟล์ในเครื่องแล้วขู่เรียกเงินเพื่อแลกกับรหัสปลดล็อก"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "การทำ 'RAID 1' มีประโยชน์อย่างไรในการเก็บข้อมูล?",
-                "choice_a": "สำรองข้อมูลซ้ำกัน 2 ดิสก์กันเสีย", "choice_b": "ดูหนังได้ชัดขึ้น 2 เท่า", "choice_c": "ทำให้เสียงเพลงดังขึ้น", "choice_d": "ลดขนาดไฟล์ลงครึ่งหนึ่ง",
+                "choice_a": "สำรอง 2 ดิสก์กันข้อมูลหาย", "choice_b": "ดูหนังได้ชัดขึ้น 2 เท่า", "choice_c": "ทำให้เสียงเพลงดังขึ้น", "choice_d": "ลดขนาดไฟล์ลงครึ่งหนึ่ง",
                 "correct_choice": "A", "explanation": "RAID 1 (Mirroring) เขียนข้อมูลเหมือนกันลงดิสก์ 2 ตัว ช่วยป้องกันข้อมูลหายหากตัวใดตัวหนึ่งเสีย"
             },
             {
@@ -518,7 +518,7 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "อาการ 'Bottleneck' (คอขวด) ในการจัดสเปกคอมพิวเตอร์คืออะไร?",
-                "choice_a": "มีชิ้นส่วนหนึ่งช้าจนฉุดเครื่องรวม", "choice_b": "มัดสายไฟในเคสแน่นเกินไป", "choice_c": "ช่องพัดลมมีขนาดเล็ก", "choice_d": "เปิดโปรแกรมพร้อมกันมาก",
+                "choice_a": "ชิ้นส่วนหนึ่งช้าจนฉุดเครื่อง", "choice_b": "มัดสายไฟในเคสแน่นเกิน", "choice_c": "ช่องพัดลมมีขนาดเล็ก", "choice_d": "เปิดโปรแกรมพร้อมกันมาก",
                 "correct_choice": "A", "explanation": "Bottleneck เกิดขึ้นเมื่ออุปกรณ์ชิ้นใดชิ้นหนึ่งช้าเกินไปจนฉุดประสิทธิภาพของระบบรวม"
             },
             {
@@ -530,13 +530,13 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "ระบบ 'Firewall' (ไฟร์วอลล์) มีหน้าที่อะไรในคอมพิวเตอร์?",
-                "choice_a": "คัดกรองและบล็อกการบุกรุกเครือข่าย", "choice_b": "ดับเพลิงเมื่อคอมร้อน", "choice_c": "ป้องกันไฟกระชาก", "choice_d": "เพิ่มแสงสว่างหน้าจอ",
+                "choice_a": "บล็อกการบุกรุกเครือข่าย", "choice_b": "ดับเพลิงเมื่อคอมร้อน", "choice_c": "ป้องกันไฟกระชาก", "choice_d": "เพิ่มแสงสว่างหน้าจอ",
                 "correct_choice": "A", "explanation": "Firewall ทำหน้าที่เป็นประตูด่านตรวจ คัดกรองทราฟฟิกข้อมูลเพื่อป้องกันผู้บุกรุก"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "ระบบ 'VPN' ช่วยเพิ่มความปลอดภัยอย่างไรเวลาเล่นเน็ตสาธารณะ?",
-                "choice_a": "เข้ารหัสข้อมูลและซ่อนหมายเลข IP", "choice_b": "ล้างไวรัสในเครื่อง", "choice_c": "เพิ่มความเร็วเน็ต 10 เท่า", "choice_d": "ประหยัดแบตเตอรี่",
+                "choice_a": "ซ่อน IP และเข้ารหัสข้อมูล", "choice_b": "ล้างไวรัสในเครื่อง", "choice_c": "เพิ่มความเร็วเน็ต 10 เท่า", "choice_d": "ประหยัดแบตเตอรี่",
                 "correct_choice": "A", "explanation": "VPN สร้างช่องทางส่งข้อมูลแบบเข้ารหัส ช่วยปกป้องความเป็นส่วนตัวบน Wi-Fi สาธารณะ"
             },
             {
@@ -548,19 +548,19 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "หน่วยความจำเสมือน 'Virtual Memory' ทำงานอย่างไรเมื่อ RAM เต็ม?",
-                "choice_a": "ดึงพื้นที่ SSD/ฮาร์ดดิสก์มาช่วยพัก", "choice_b": "ส่งข้อมูลไปเก็บในมือถือ", "choice_c": "ปิดคอมพิวเตอร์ทันที", "choice_d": "ลบไฟล์รูปภาพทิ้ง",
+                "choice_a": "ดึงพื้นที่ดิสก์มาช่วยพักแรม", "choice_b": "ส่งข้อมูลไปเก็บในมือถือ", "choice_c": "ปิดคอมพิวเตอร์ทันที", "choice_d": "ลบไฟล์รูปภาพทิ้ง",
                 "correct_choice": "A", "explanation": "Virtual Memory นำพื้นที่จัดเก็บบนดิสก์มาช่วยพักข้อมูลชั่วคราวเพื่อป้องกันโปรแกรมค้าง"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "การทำ 'Overclock' (โอเวอร์คล็อก) คืออะไร?",
-                "choice_a": "เร่งความเร็วชิ้นส่วนเกินสเปกเดิม", "choice_b": "ตั้งเวลาเปิด-ปิดตามนาฬิกา", "choice_c": "การเปลี่ยนเคสใหม่", "choice_d": "การลดความเร็วพัดลม",
+                "choice_a": "เร่งความเร็วเกินสเปกเดิม", "choice_b": "ตั้งเวลาเปิด-ปิดตามนาฬิกา", "choice_c": "การเปลี่ยนเคสใหม่", "choice_d": "การลดความเร็วพัดลม",
                 "correct_choice": "A", "explanation": "Overclock คือการปรับเร่งความเร็วของ CPU หรือ GPU ให้ทำงานสูงกว่าค่ามาตรฐานโรงงาน"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "กฎสำรองข้อมูล '3-2-1 Backup' มีหลักการง่าย ๆ อย่างไร?",
-                "choice_a": "เก็บ 3 ชุด, 2 สื่อ, 1 ที่บนคลาวด์", "choice_b": "สำรองข้อมูลสัปดาห์ละ 3 ครั้ง", "choice_c": "ใช้คอม 3 เครื่อง ฮาร์ดดิสก์ 2 ตัว", "choice_d": "นับ 3 2 1 ก่อนกดบันทึก",
+                "choice_a": "เก็บ 3 ชุด 2 สื่อ 1 คลาวด์", "choice_b": "สำรองสัปดาห์ละ 3 ครั้ง", "choice_c": "ใช้คอม 3 เครื่อง ดิสก์ 2 ตัว", "choice_d": "นับ 3 2 1 ก่อนกดบันทึก",
                 "correct_choice": "A", "explanation": "3-2-1 Backup คือวิธีสำรองข้อมูลที่ดีที่สุด: 3 ชุดข้อมูล, 2 รูปแบบสื่อ, 1 ชุดบนคลาวด์"
             },
             {
@@ -572,37 +572,37 @@ class Command(BaseCommand):
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "อัตราการรีเฟรช 'Refresh Rate' 144Hz บนจอมอนิเตอร์ มีประโยชน์อย่างไร?",
-                "choice_a": "ภาพเคลื่อนไหวลื่นไหลนุ่มนวลกว่า", "choice_b": "จอภาพประหยัดไฟขึ้น 2 เท่า", "choice_c": "เสียงเพลงดังขึ้น", "choice_d": "แป้นพิมพ์กดง่ายขึ้น",
+                "choice_a": "ภาพเคลื่อนไหวลื่นไหลเนียนตา", "choice_b": "จอภาพประหยัดไฟขึ้น 2 เท่า", "choice_c": "เสียงเพลงดังขึ้น", "choice_d": "แป้นพิมพ์กดง่ายขึ้น",
                 "correct_choice": "A", "explanation": "Refresh Rate 144Hz แสดงผล 144 ภาพต่อวินาที ทำให้ภาพเคลื่อนไหวเนียนตาลื่นไหล"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "หมายเลข 'MAC Address' แตกต่างจาก 'IP Address' อย่างไร?",
-                "choice_a": "MAC ฝังมากับการ์ดเน็ตถาวร", "choice_b": "MAC ใช้เฉพาะเครื่อง Apple", "choice_c": "IP เปลี่ยนแปลงไม่ได้", "choice_d": "ทั้งคู่เหมือนกันทุกอย่าง",
+                "choice_a": "MAC ฝังติดการ์ดเน็ตถาวร", "choice_b": "MAC ใช้เฉพาะเครื่อง Apple", "choice_c": "IP เปลี่ยนแปลงไม่ได้", "choice_d": "ทั้งคู่เหมือนกันทุกอย่าง",
                 "correct_choice": "A", "explanation": "MAC Address เป็นเลขประจำตัวฮาร์ดแวร์ถาวร ส่วน IP Address กำหนดตามเครือข่ายที่เชื่อมต่อ"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "ระบบ 'Multi-Core' (เช่น Quad-Core) ใน CPU หมายถึงอะไร?",
-                "choice_a": "มีแกนประมวลผลหลายตัวในชิปเดียว", "choice_b": "มีพัดลมระบายความร้อน 4 ตัว", "choice_c": "มีสายไฟต่อเข้า 2 เส้น", "choice_d": "ทำให้หน้าจอมีหลายสี",
+                "choice_a": "มีหลายแกนสมองในชิปเดียว", "choice_b": "มีพัดลมระบายความร้อน 4 ตัว", "choice_c": "มีสายไฟต่อเข้า 2 เส้น", "choice_d": "ทำให้หน้าจอมีหลายสี",
                 "correct_choice": "A", "explanation": "Multi-Core คือการรวมหน่วยประมวลผลหลายแกนไว้ในชิป CPU เดียวกันเพื่อแบ่งงานกันทำ"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "แรมมาตรฐาน 'DDR5' มีข้อดีกว่า 'DDR4' อย่างไร?",
-                "choice_a": "ส่งข้อมูลเร็วกว่าและประหยัดไฟ", "choice_b": "มีขนาดแผงใหญ่กว่าเดิม 2 เท่า", "choice_c": "ไม่ต้องใช้กระแสไฟฟ้า", "choice_d": "เสียบลงช่อง DDR4 ได้ทันที",
+                "choice_a": "ส่งข้อมูลไวกว่าและประหยัดไฟ", "choice_b": "มีขนาดแผงใหญ่กว่าเดิม 2 เท่า", "choice_c": "ไม่ต้องใช้กระแสไฟฟ้า", "choice_d": "เสียบลงช่อง DDR4 ได้ทันที",
                 "correct_choice": "A", "explanation": "DDR5 มีความเร็วถ่ายโอนข้อมูลสูงกว่าและใช้พลังงานน้อยกว่า DDR4"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "การโจมตีแบบ 'DDoS' บนเว็บไซต์ มีลักษณะอย่างไร?",
-                "choice_a": "ระดมยิงข้อมูลจนเว็บล่ม", "choice_b": "แอบขโมยแป้นพิมพ์", "choice_c": "ตัดสายไฟ", "choice_d": "ส่งสติกเกอร์ในแชท",
+                "choice_a": "ยิงข้อมูลจนเว็บล่ม", "choice_b": "แอบขโมยแป้นพิมพ์", "choice_c": "ตัดสายไฟ", "choice_d": "ส่งสติกเกอร์ในแชท",
                 "correct_choice": "A", "explanation": "DDoS มุ่งยิงทราฟฟิกปริมาณมหาศาลจากหลายเครื่องจนทำให้เซิร์ฟเวอร์เป้าหมายล่ม"
             },
             {
                 "category": cat_basic, "difficulty": "ยาก", "is_active": True,
                 "text": "เหตุใดจึงไม่ควรนำแฟลชไดรฟ์ของคนแปลกหน้ามาเสียบเครื่อง?",
-                "choice_a": "อาจมีไวรัสหรือมัลแวร์แฝงอยู่", "choice_b": "ทำให้พอร์ต USB ละลาย", "choice_c": "ทำให้หน้าจอเปลี่ยนสี", "choice_d": "ทำให้ค่าไฟบ้านเพิ่มขึ้น",
+                "choice_a": "เสี่ยงติดไวรัสหรือมัลแวร์", "choice_b": "ทำให้พอร์ต USB ละลาย", "choice_c": "ทำให้หน้าจอเปลี่ยนสี", "choice_d": "ทำให้ค่าไฟบ้านเพิ่มขึ้น",
                 "correct_choice": "A", "explanation": "Flash Drive ที่ไม่ทราบที่มาอาจมีไวรัสแฝงอยู่เพื่อแพร่กระจายหรือขโมยข้อมูล"
             },
 
@@ -612,7 +612,7 @@ class Command(BaseCommand):
             {
                 "category": cat_cs, "difficulty": "ง่าย", "is_active": True,
                 "text": "สาขาวิทยาการคอมพิวเตอร์ (Computer Science) เรียนเน้นเรื่องอะไร?",
-                "choice_a": "เขียนโปรแกรม สร้างเกม เว็บ และ AI", "choice_b": "ซ่อมพัดลมและเดินสายไฟบ้าน", "choice_c": "พิมพ์ดีดเอกสารอย่างเดียว", "choice_d": "เล่นเกมทั้งวันไม่ต้องเรียน",
+                "choice_a": "เขียนโค้ด สร้างเกม เว็บ และ AI", "choice_b": "ซ่อมพัดลมและเดินสายไฟ", "choice_c": "พิมพ์ดีดเอกสารอย่างเดียว", "choice_d": "เล่นเกมไม่ต้องเรียน",
                 "correct_choice": "A", "explanation": "วิทยาการคอมพิวเตอร์ (CS) เรียนการคิดเป็นระบบ เขียนโค้ด สร้างเกม เว็บไซต์ และนวัตกรรม AI"
             },
             {
@@ -648,13 +648,13 @@ class Command(BaseCommand):
             {
                 "category": cat_cs, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "คำสั่ง 'If...Else' ในการเขียนโปรแกรม มีไว้ใช้ทำอะไร?",
-                "choice_a": "ตรวจสอบเงื่อนไขเพื่อตัดสินใจ", "choice_b": "การวนทำซ้ำไม่รู้จบ", "choice_c": "ปิดเครื่องคอมพิวเตอร์", "choice_d": "ลบโค้ดทิ้ง",
+                "choice_a": "เช็คเงื่อนไขเพื่อตัดสินใจ", "choice_b": "การวนทำซ้ำไม่รู้จบ", "choice_c": "ปิดเครื่องคอมพิวเตอร์", "choice_d": "ลบโค้ดทิ้ง",
                 "correct_choice": "A", "explanation": "If-Else ใช้ตรวจสอบเงื่อนไข เช่น 'ถ้าคะแนนถึง 50 ให้ผ่าน มิฉะนั้น ให้ปรับปรุง'"
             },
             {
                 "category": cat_cs, "difficulty": "ปานกลาง", "is_active": True,
                 "text": "คำสั่งประเภท 'Loop' ในการเขียนโปรแกรมมีประโยชน์อย่างไร?",
-                "choice_a": "สั่งทำงานซ้ำตามรอบที่ต้องการ", "choice_b": "เปิดเพลงวนซ้ำ", "choice_c": "สุ่มตัวเลข", "choice_d": "ปิดหน้าต่างโปรแกรม",
+                "choice_a": "ทำงานซ้ำตามรอบที่สั่ง", "choice_b": "เปิดเพลงวนซ้ำ", "choice_c": "สุ่มตัวเลข", "choice_d": "ปิดหน้าต่างโปรแกรม",
                 "correct_choice": "A", "explanation": "Loop หรือการวนซ้ำ ใช้สั่งให้คอมพิวเตอร์ทำงานเดิมซ้ำ ๆ โดยไม่ต้องเขียนโค้ดซ้ำหลายบรรทัด"
             },
             {
@@ -702,7 +702,7 @@ class Command(BaseCommand):
 
         # สรุปผล
         self.stdout.write(self.style.SUCCESS(f"\n======================================================="))
-        self.stdout.write(self.style.SUCCESS(f"[SUCCESS] ชุดคำถามระดับ ป.3 - ม.3 (ตัวเลือกสั้นกระชับ) พร้อมใช้งาน 100%!"))
+        self.stdout.write(self.style.SUCCESS(f"[SUCCESS] คำถาม ป.3 - ม.3 (ตัวเลือกสั้นกระชับทุกข้อ 100 ข้อ) พร้อมใช้งาน 100%!"))
         self.stdout.write(self.style.SUCCESS(f"  - บันทึกลง SQLite: {success_db}/{len(raw_questions)} ข้อ"))
         self.stdout.write(self.style.SUCCESS(f"  - ซิงค์ขึ้น Firebase: {success_fb}/{len(raw_questions)} ข้อ"))
         self.stdout.write(self.style.SUCCESS(f"  - หมวดคอมพิวเตอร์เบื้องต้น: ง่าย 40 ข้อ, ปานกลาง 25 ข้อ, ยาก 25 ข้อ (รวม 90 ข้อ)"))
