@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}ไม่พบหน้าที่ต้องการ (404 Not Found) — CS RANDOM QUIZ{% endblock %}
+
+{% block content %}
+<div style="min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); display: flex; align-items: center; justify-content: center; padding: 2rem; color: #ffffff; font-family: 'Prompt', 'Kanit', sans-serif;">
+  <div style="background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 32px; padding: 3.5rem 2.5rem; text-align: center; max-width: 540px; width: 100%; box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);">
+    
+    <div style="font-size: 5rem; line-height: 1; margin-bottom: 1.2rem; filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));">
+      🧭 404
+    </div>
+    
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-bottom: 0.8rem;">
+      ไม่พบหน้าที่คุณต้องการ
+    </h1>
+    
+    <p style="color: #94a3b8; font-size: 1.05rem; line-height: 1.6; margin-bottom: 2.2rem;">
+      หน้าที่คุณกำลังค้นหาอาจถูกย้าย ลบ หรือคุณอาจพิมพ์ที่อยู่ URL ไม่ถูกต้อง
+    </p>
+
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="{% url 'home' %}" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; text-decoration: none; padding: 0.85rem 1.8rem; border-radius: 16px; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); transition: all 0.2s ease;">
+        🏠 กลับหน้าหลักเวที
+      </a>
+      <a href="{% url 'admin_dashboard' %}" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #e2e8f0; text-decoration: none; padding: 0.85rem 1.6rem; border-radius: 16px; font-weight: 600; font-size: 1rem; transition: all 0.2s ease;">
+        ⚙️ ไปที่ Dashboard
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
